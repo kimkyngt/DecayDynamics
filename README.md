@@ -21,6 +21,7 @@ F_g & 1 & F_e \\
 $C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in Cartesian coordinate. 
 
 To calculate the radiation power at $\mathbf{r}$, evaluate 
+
 $$\begin{gathered}
 I(\mathbf{r}) = \left\langle \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right\rangle
 \end{gathered}$$
