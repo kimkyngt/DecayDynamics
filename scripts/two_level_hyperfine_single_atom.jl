@@ -4,21 +4,21 @@ include("../src/single_atom_two_level.jl")
 
 # Parameters
 F_e = 3//2
-F_g = 1//2
+F_g = 3//2
 Fe = string(F_e.num)*"half"
 Fg = string(F_g.num)*"half"
-ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e) + 2*Fm_state(F_e, F_e-1)) ⊕ Ket(SpinBasis(F_g))))
+ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e) + 1*Fm_state(F_e, F_e-1)) ⊕ Ket(SpinBasis(F_g))))
 # ρ_0 = sparse(normalize(one(SpinBasis(F_e))) ⊕ projector(Ket(SpinBasis(F_g))))
 # ρ_0 = sparse(normalize(projector(Fm_state(F_e, F_e)⊕ Ket(SpinBasis(F_g))) + projector(Fm_state(F_e, F_e-1)⊕ Ket(SpinBasis(F_g)))))
-Astring="1_3_superposition2"
-tspan = 0:0.05:3
+Astring="1_3_superposition2_gratio3"
+tspan = 0:0.05:5
 # Bfield in units of Γ/2π
 field_x = 0.0
 field_y = 0.0
 field_z = 2
 # g-factor
 g_e = 1.0 
-g_g = 0.7
+g_g = 0.3
 
 parameters = @dict F_e F_g Fe Fg ρ_0 tspan field_x field_z field_y g_e g_g Astring 
 @time result = evolve_master(parameters)
@@ -31,5 +31,5 @@ filename = savename(tostringdict(parameters), connector="-", allowedtypes=[Abstr
 gr()
 anim = gif( get_animation(result), datadir("two_level_hyperfine_single_atom", filename*".gif"), fps=5)
 savefig(plot_dynamics(result), datadir("two_level_hyperfine_single_atom", filename*".pdf"))
-safesave(datadir("two_level_hyperfine_single_atom", filename*".jld2"), tostringdict(result))
+wsave(datadir("two_level_hyperfine_single_atom", filename*".jld2"), tostringdict(result))
 

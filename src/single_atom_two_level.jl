@@ -155,6 +155,7 @@ function plot_dynamics(parameters::Dict; kwargs...)
     b_g = SpinBasis(F_g)
     fig1 = plot(ylab="Excited, $F_e")
     plot!(fig1, t_out, real.(expect(one(b_e) ⊕ 0*one(b_g), ρ_t)), label="Tr(ρᵉᵉ)", legend=:right, ls=:dash, lc=:black)
+    plot!(fig1, t_out, real.(expect(one(b_e) ⊕ one(b_g), ρ_t)), label="Tr(ρ)", legend=:right, ls=:solid, lc=:black)
     for ii in range(1, Int(F_e*2+1))
         spin = F_e - (ii-1)
         state_to_plot = dagger(normalize((sigmam(b_e)^(ii-1) * spinup(b_e)) ⊕ Ket(b_g) ))
@@ -168,7 +169,7 @@ function plot_dynamics(parameters::Dict; kwargs...)
         plot!(fig2, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", color=palette_g[ii])
     end
     # excited, coherene
-    fig3 = plot(ylab="Coherence, e", xlab="Time", leg=:right)
+    fig3 = plot(ylab="Coherence, e", xlab="Time")
     for ii in range(1, Int(F_e*2))
         spin_l = F_e - (ii-1)
         spin_h = F_e - ii
@@ -176,7 +177,7 @@ function plot_dynamics(parameters::Dict; kwargs...)
         plot!(fig3, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵉᵉ($spin_h, $spin_l)", color=palette_e[ii])
     end
 
-    fig4 = plot(ylab="Coherence, g", xlab="Time", leg=:right)
+    fig4 = plot(ylab="Coherence, g", xlab="Time")
     for ii in range(1, Int(F_g*2))
         spin_l = F_g - (ii-1)
         spin_h = F_g - ii
