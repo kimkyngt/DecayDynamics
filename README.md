@@ -23,7 +23,7 @@ $C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the po
 
 To calculate the radiation power at $\mathbf{r}$, evaluate 
 $$\begin{gathered}
-I(\mathbf{r}) = \left< \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right>
+I(\mathbf{r}) = \left\langle \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right\rangle
 \end{gathered}$$
 , where the electric field operator is defined as
 $$\begin{gathered}
@@ -67,7 +67,7 @@ $$ -->
 2.  A. Asenjo-Garcia, H. J. Kimble, D. E. Chang, Proc. Natl. Acad. Sci. U.S.A. 116, 25503–25511 (2019).
 3.  B. Zhu, J. Cooper, J. Ye, A. M. Rey, Phys. Rev. A. 94, 023612 (2016).
 
-## Activating this project
+# Activating this project
 
 To (locally) reproduce this project, do the following:
 
