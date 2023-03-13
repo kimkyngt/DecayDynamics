@@ -16,10 +16,9 @@ C_{m_g, q}=(-1)^{F_g-m_g}\left(\begin{array}{llc}
 F_g & 1 & F_e \\
 -m_g & q & m_g-q
 \end{array}\right)
-\end{gathered}
-$$
+\end{gathered}$$
 
-$C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in spherical coordinate. 
+$C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in Cartesian coordinate. 
 
 To calculate the radiation power at $\mathbf{r}$, evaluate 
 $$\begin{gathered}
