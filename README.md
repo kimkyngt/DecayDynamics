@@ -5,24 +5,16 @@
 
 $$\begin{gathered}
 \mathscr{H}=\hbar \sum_{q = -1}^1 J_{q} \hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{ q^{\prime}}, \\
-
 \mathscr{L}[\rho]=\sum_{q = -1}^1 \frac{\Gamma_{q}}{2}\left(2 \hat{\Sigma}_{ q^{\prime}} \rho \hat{\Sigma}_{q}^{\dagger}-\hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{j q^{\prime}} \rho -\rho \hat{\Sigma}_{q}^{\dagger} \hat{\Sigma} \right) \\
-
 J_{q}=0 \\
-
 \Gamma_{q q}=\frac{2 \mu_0 \omega_0^2}{\hbar}|\wp|^2 \hat{\mathbf{e}}_q \cdot \operatorname{Im} \mathbf{G}\left(\mathbf{0}, \mathbf{0}, \omega_0\right) \cdot \hat{\mathbf{e}}_{q}^* \\
-
 \mathbf{G}\left(\mathbf{r}, \omega_0\right)=\frac{e^{\mathrm{i} k_0 r}}{4 \pi k_0^2 r^3}\left[\left(k_0^2 r^2+\mathrm{i} k_0 r-1\right) \mathbb{1} + \left(-k_0^2 r^2-3 \mathrm{i} k_0 r+3\right) \frac{\mathbf{r} \otimes \mathbf{r}}{r^2}\right] \\
-
 \hat{\Sigma}_{q}^{\dagger}=\sum_{m_g=-F_g}^{F_g} C_{m_g, q} \hat{\sigma}_{F_e m_g-q, F_g m_g} \\
-
 \hat{\sigma}_{F_e m_g-q, F_g m_g}=\left|F_e m_g-q \right> \left< F_g m_g\right| \\
-
 C_{m_g, q}=(-1)^{F_g-m_g}\left(\begin{array}{llc}
 F_g & 1 & F_e \\
 -m_g & q & m_g-q
 \end{array}\right)
-
 \end{gathered}
 $$
 
