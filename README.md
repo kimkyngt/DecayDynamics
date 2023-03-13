@@ -21,13 +21,10 @@ $$
 $C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in spherical coordinate. 
 
 To calculate the radiation power at $\mathbf{r}$, evaluate 
-$$
-I(\mathbf{r}) = \left< \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right>
-$$
+$$I(\mathbf{r}) = \left< \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right>$$
 , where
-$$
-\hat{\mathbf{E}}^{+}(\mathbf{r})=\mu_0 \omega_0^2 \sum_{q=-1}^1 \mathbf{G}\left(\mathbf{r}, 0, \omega_0\right) \cdot \hat{\mathbf{e}}_q^* \wp \hat{\Sigma}_{j q} 
-$$
+
+$$\hat{\mathbf{E}}^{+}(\mathbf{r})=\mu_0 \omega_0^2 \sum_{q=-1}^1 \mathbf{G}\left(\mathbf{r}, 0, \omega_0\right) \cdot \hat{\mathbf{e}}_q^* \wp \hat{\Sigma}_{j q}$$
 .
 
 ## Cascaded multilevel
