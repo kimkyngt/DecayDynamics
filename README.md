@@ -1,6 +1,7 @@
 # DecayDynamics
 
 ## Single particle, multi level
+
 - Notation following [2].
 
 $$\begin{gathered}
@@ -23,11 +24,11 @@ $C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the po
 To calculate the radiation power at $\mathbf{r}$, evaluate 
 $$I(\mathbf{r}) = \left< \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right>$$
 , where
-
-$$\hat{\mathbf{E}}^{+}(\mathbf{r})=\mu_0 \omega_0^2 \sum_{q=-1}^1 \mathbf{G}\left(\mathbf{r}, 0, \omega_0\right) \cdot \hat{\mathbf{e}}_q^* \wp \hat{\Sigma}_{j q}$$
+$$\hat{\mathbf{E}}^{+}(\mathbf{r})= \mu_{0} \omega_{0}^2 \sum_{q=-1}^1 \mathbf{G} \left(\mathbf{r}, 0, \omega_{0}\right) \cdot \hat{\mathbf{e}}_q^* \wp \hat{\Sigma}_{j q}$$
 .
 
 ## Cascaded multilevel
+
 For 3D1-3P1-1S0 decay.
 
 <!-- 
