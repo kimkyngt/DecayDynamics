@@ -25,7 +25,7 @@ To calculate the radiation power at $\mathbf{r}$, evaluate
 $$
 \begin{gathered}
 I(\mathbf{r}) = \left< \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right> \\
-\hat{\mathbf{E}}^{+}(\mathbf{r})= \mu_{0} \omega_{0}^2 \sum_{q=-1}^1 \mathbf{G} \left(\mathbf{r}, 0, \omega_{0}\right) \cdot 
+\hat{\mathbf{E}}^{+}(\mathbf{r})= \mu_{0} \omega_{0}^2 \sum_{q=-1}^1 
 \end{gathered}
 $$
 
