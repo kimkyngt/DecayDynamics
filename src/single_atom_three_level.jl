@@ -174,8 +174,8 @@ function plot_dynamics(parameters::Dict; kwargs...)
         mycolor = cgrad(:Spectral, Int(2*F_i[indx]+1), categorical=true)
         blank_state = [projector(Ket(b_i[ii])) for ii in [1, 2, 3]]
         for ii in range(1, Int(F_i[indx]*2))
-            spin_l = F_i[indx] - (ii-1)
-            spin_h = F_i[indx] - ii
+            spin_l = F_i[indx] - ii
+            spin_h = F_i[indx] - (ii-1)
             _blank_state = copy(blank_state)
             _blank_state[indx] = projector(Fm_state(F_i[indx], spin_h), dagger(Fm_state(F_i[indx], spin_l)))
             state_to_plot = directsum(_blank_state...)

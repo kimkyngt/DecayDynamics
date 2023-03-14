@@ -179,8 +179,8 @@ function plot_dynamics(parameters::Dict; kwargs...)
 
     fig4 = plot(ylab="Coherence, g", xlab="Time")
     for ii in range(1, Int(F_g*2))
-        spin_l = F_g - (ii-1)
-        spin_h = F_g - ii
+        spin_h = F_g - (ii-1)
+        spin_l = F_g - ii
         state_to_plot = Operator(b_e, b_e, zeros(length(b_e), length(b_e))) ⊕ (Fm_state(F_g, spin_h) ⊗ dagger(Fm_state(F_g, spin_l)))
         plot!(fig4, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵍᵍ($spin_h, $spin_l)", color=palette_g[ii])
     end

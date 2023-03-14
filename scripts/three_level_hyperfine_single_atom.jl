@@ -5,7 +5,7 @@ include("../src/single_atom_three_level.jl")
 # Parameters
 filename = "test"
 
-F_i = [1//2, 1//2, 1//2]
+F_i = [3//2, 3//2, 3//2]
 g_i = [1.0, 1.0, 1.0]
 Γ_i = [10.0, 1.0, 0]
 Bfield = [0, 0, 1]
