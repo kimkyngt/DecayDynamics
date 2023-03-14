@@ -61,7 +61,7 @@ end
 """
 Draw radiation pattern
 """
-function draw_radiation_pattern(ρ::Operator, nang::Int=20,; kwargs...)
+function draw_radiation_pattern(ρ::Operator, F_i::Vector{<:Rational}, nang::Int=20,; kwargs...)
     θ = range(0, π, length = nang)
     ϕ = range(0, 2π, length  = nang)
     x, y, z = polar_2_xyz(θ, ϕ, 1.5*ones(length(θ)))
@@ -69,7 +69,7 @@ function draw_radiation_pattern(ρ::Operator, nang::Int=20,; kwargs...)
     intensity_r = zero(x)
     for I in CartesianIndices(x)
         i, j = I[1], I[2]
-        intensity_r[i, j] = get_intensity([x[i, j], y[i, j], z[i, j]], ρ)
+        intensity_r[i, j] = get_intensity([x[i, j], y[i, j], z[i, j]], ρ, F_i)
     end
     intensity_r = intensity_r/maximum(intensity_r) # normalize
     data_x, data_y, data_z = polar_2_xyz(θ, ϕ, intensity_r)
@@ -97,13 +97,13 @@ end
 """
 Get animation using Plot.jl's @animate macro. 
 """
-function get_animation(experiment::Dict;kwargs...)
-    @unpack t_out, ρ_t = experiment
+function get_animation(result::Dict;kwargs...)
+    @unpack t_out, ρ_t, F_i= result
     p = Progress(length(t_out), "Generating gif...")
     anim = @animate for ii in eachindex(t_out)
         # Update the plot with the i-th frame
         tlabel = t_out[ii]
-        draw_radiation_pattern(ρ_t[ii], title="Time = $tlabel/Γ")
+        draw_radiation_pattern(ρ_t[ii], F_i, title="Time = $tlabel/Γ")
         next!(p)
     end
     return anim
@@ -180,9 +180,10 @@ function plot_dynamics(parameters::Dict; kwargs...)
             _blank_state[indx] = projector(Fm_state(F_i[indx], spin_h), dagger(Fm_state(F_i[indx], spin_l)))
             state_to_plot = directsum(_blank_state...)
             plot!(fig, t_out, real.(expect(state_to_plot, ρ_t)), label="($spin_h, $spin_l)", color=mycolor[ii])
+            plot!(fig, t_out, imag.(expect(state_to_plot, ρ_t)), label="", color=mycolor[ii], ls=:dash)
         end
         push!(figs, fig)
     end
 
-    return plot(figs..., size=(1500, 800), layout=(2, 3), margins=5Plots.mm;kwargs...)
+    return plot(figs..., size=(1500, 800), layout=(2, 3), margins=30Plots.px;kwargs...)
 end
