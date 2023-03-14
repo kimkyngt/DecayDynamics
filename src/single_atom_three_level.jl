@@ -127,9 +127,9 @@ Solve time dynamics w ith master equation.
 function evolve_master(parameters::Dict)
     @unpack F_i, g_i, Γ_i, Bfield, ρ_0, tspan = parameters
     q_list = [-1, 0, 1]
-    H  = π*directsum([Bfield[ii]*g_i[ii]*sigmax(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
-    H += π*directsum([Bfield[ii]*g_i[ii]*sigmay(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
-    H += π*directsum([Bfield[ii]*g_i[ii]*sigmaz(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
+    H  = π*directsum([Bfield[1]*g_i[ii]*sigmax(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
+    H += π*directsum([Bfield[2]*g_i[ii]*sigmay(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
+    H += π*directsum([Bfield[3]*g_i[ii]*sigmaz(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
     H = sparse(H)
     J = vcat([sqrt(Γ_i[1])*(Σ_q(q, F_i[1], F_i[2]) ⊕ one(SpinBasis(F_i[3]))) for q in q_list], [sqrt(Γ_i[2])*(one(SpinBasis(F_i[1])) ⊕ Σ_q(q, F_i[2], F_i[3])) for q in q_list])
     t_out, ρ_t = timeevolution.master_h(tspan, ρ_0, H, J)
@@ -142,43 +142,47 @@ end
 Plot time evolution data
 """
 function plot_dynamics(parameters::Dict; kwargs...)
-    @unpack F_i, g_i, Γ_i, Bfield, ρ_0, tspan = parameters
-    # Plot population dynamics
-    palette_e = cgrad(:jet, Int(2*F_e+1), categorical=true)
-    palette_g = cgrad(:jet, Int(2*F_g+1), categorical=true)
-    b_e = SpinBasis(F_e)
-    b_g = SpinBasis(F_g)
-    fig1 = plot(ylab="Excited, $F_e")
-    plot!(fig1, t_out, real.(expect(one(b_e) ⊕ 0*one(b_g), ρ_t)), label="Tr(ρᵉᵉ)", legend=:right, ls=:dash, lc=:black)
-    plot!(fig1, t_out, real.(expect(one(b_e) ⊕ one(b_g), ρ_t)), label="Tr(ρ)", legend=:right, ls=:solid, lc=:black)
-    for ii in range(1, Int(F_e*2+1))
-        spin = F_e - (ii-1)
-        state_to_plot = dagger(normalize((sigmam(b_e)^(ii-1) * spinup(b_e)) ⊕ Ket(b_g) ))
-        plot!(fig1, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", color=palette_e[ii])
+    @unpack F_i, g_i, Γ_i, Bfield, ρ_t, t_out = parameters
+
+    b_i = [SpinBasis(F_i[ii]) for ii in [1, 2, 3]]
+    
+    figs = []
+    # Plot population
+    for indx in [1, 2, 3]
+        fig = plot(ylab="Population, Level-$indx, $(F_i[indx])", legend=:best,)
+        id_ops = [one(b_i[ii]) for ii in [1, 2, 3]]
+        id_vec = circshift([1, 0, 0], indx-1)
+        # Plot population of level-indx
+        plot!(fig, t_out, real.(expect(directsum([one(b_i[ii]) for ii in [1, 2, 3]]...), ρ_t)), label="Tr(ρ)", ls=:solid, lc=:black)
+        plot!(fig, t_out, real.(expect(directsum([id_vec[ii]*id_ops[ii] for ii in [1, 2, 3]]...), ρ_t)), label="Tr(ρ$indx)",  ls=:dash, lc=:black)
+
+        # Plot each sublevel's population
+        mycolor = cgrad(:Spectral, Int(2*F_i[indx]+1), categorical=true)
+        blank_state = [Ket(b_i[ii]) for ii in [1, 2, 3]]
+        for ii in range(1, Int(F_i[indx]*2+1))
+            spin = F_i[indx] - (ii-1)
+            _blank_state = copy(blank_state)
+            _blank_state[indx] = Fm_state(F_i[indx], spin)
+            state_to_plot = directsum(_blank_state...)
+            plot!(fig, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", color=mycolor[ii])
+        end
+        push!(figs, fig)
     end
-    fig2 = plot(ylab="Ground, $F_g", xlab="Time", leg=:right)
-    plot!(fig2, t_out, real.(expect(0*one(b_e) ⊕ one(b_g), ρ_t)), label="Tr(ρᵍᵍ)", legend=:right, ls=:dash, lc=:black)
-    for ii in range(1, Int(F_g*2+1))
-        spin = F_g - (ii-1)
-        state_to_plot = dagger(normalize( Ket(b_e) ⊕ (sigmam(b_g)^(ii-1) * spinup(b_g)) ))
-        plot!(fig2, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", color=palette_g[ii])
-    end
-    # excited, coherene
-    fig3 = plot(ylab="Coherence, e", xlab="Time")
-    for ii in range(1, Int(F_e*2))
-        spin_l = F_e - (ii-1)
-        spin_h = F_e - ii
-        state_to_plot = (Fm_state(F_e, spin_h) ⊗ dagger(Fm_state(F_e, spin_l))) ⊕ Operator(b_g, b_g, zeros(length(b_g), length(b_g))) 
-        plot!(fig3, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵉᵉ($spin_h, $spin_l)", color=palette_e[ii])
+    for indx in [1, 2, 3]
+        fig = plot(ylab="Coherence, Level-$indx, $(F_i[indx])", legend=:best,)
+        # Plot each sublevel's coherence
+        mycolor = cgrad(:Spectral, Int(2*F_i[indx]+1), categorical=true)
+        blank_state = [projector(Ket(b_i[ii])) for ii in [1, 2, 3]]
+        for ii in range(1, Int(F_i[indx]*2))
+            spin_l = F_i[indx] - (ii-1)
+            spin_h = F_i[indx] - ii
+            _blank_state = copy(blank_state)
+            _blank_state[indx] = projector(Fm_state(F_i[indx], spin_h), dagger(Fm_state(F_i[indx], spin_l)))
+            state_to_plot = directsum(_blank_state...)
+            plot!(fig, t_out, real.(expect(state_to_plot, ρ_t)), label="($spin_h, $spin_l)", color=mycolor[ii])
+        end
+        push!(figs, fig)
     end
 
-    fig4 = plot(ylab="Coherence, g", xlab="Time")
-    for ii in range(1, Int(F_g*2))
-        spin_l = F_g - (ii-1)
-        spin_h = F_g - ii
-        state_to_plot = Operator(b_e, b_e, zeros(length(b_e), length(b_e))) ⊕ (Fm_state(F_g, spin_h) ⊗ dagger(Fm_state(F_g, spin_l)))
-        plot!(fig4, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵍᵍ($spin_h, $spin_l)", color=palette_g[ii])
-    end
-
-    return plot(fig1, fig2, fig3, fig4, layout=(2, 2), size=(1200, 800), margins=5Plots.mm;kwargs...)
+    return plot(figs..., size=(1500, 800), layout=(2, 3), margins=5Plots.mm;kwargs...)
 end

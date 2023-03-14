@@ -42,13 +42,16 @@ flowchart TD
 ```
 
 First we define atomic lowering operator again.
-$$\begin{gathered}
+
+$$
+\begin{gathered}
 {\hat{\Sigma}_{q}^{F_1, F_2}}^{\dagger}=\sum_{m_2=-F_2}^{F_2} C_{m_2, q}^{F_1, F_2} \hat{\sigma}_{F_1, m_2-q, F_2, m_2} \\
 C_{m_2, q}^{F_1, F_2} = (-1)^{F_2-m_2}\left(\begin{array}{llc}
 F_2 & 1 & F_1 \\
 -m_2 & q & m_2-q
 \end{array}\right)
-\end{gathered}$$
+\end{gathered}
+$$
 
 Green function is depending on the wavelength of the transition.
 
@@ -58,7 +61,7 @@ $$
 
 However, this will not matter as long as we are considering a single atom. It will not change the angular dependence of the radiation pattern as well. 
 
-We set the decay rate of level-$i$ $\Gamma_q^i$ to be 0.1(1.0) for the level-1(2).
+We set the decay rate of level-$i$ $\Gamma_q^i$ to be 10(1) for the level-1(2).
 
 $$
 \mathscr{L}[\rho]=\sum_{i = 1}^2 \sum_{q = -1}^1 \frac{\Gamma_{q}^{i}}{2}\left(2 \hat{\Sigma}_{ q^{\prime}}^{F_i, F_{i+1}} \rho {\hat{{\Sigma}_{q}}^{F_i, F_{i+1}}}^{\dagger}-{\hat{\Sigma}_{q}^{F_i, F_{i+1}}}^{\dagger} \hat{\Sigma}_{q}^{F_i, F_{i+1}} \rho -\rho {\hat{\Sigma}_{q}^{F_i, F_{i+1}}}^{\dagger} \hat{\Sigma}_{q}^{F_i, F_{i+1}} \right)
