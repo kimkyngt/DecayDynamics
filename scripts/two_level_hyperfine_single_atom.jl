@@ -29,7 +29,7 @@ filename = savename(tostringdict(parameters), connector="-", allowedtypes=[Abstr
 
 # Save data and gif
 gr()
-anim = gif( get_animation(result), datadir("two_level_hyperfine_single_atom", filename*".gif"), fps=5)
-savefig(plot_dynamics(result), datadir("two_level_hyperfine_single_atom", filename*".pdf"))
-wsave(datadir("two_level_hyperfine_single_atom", filename*".jld2"), tostringdict(result))
+# anim = gif( get_animation(result), datadir("two_level_hyperfine_single_atom", filename*".gif"), fps=5)
+# savefig(plot_dynamics(result), datadir("two_level_hyperfine_single_atom", filename*".pdf"))
+# wsave(datadir("two_level_hyperfine_single_atom", filename*".jld2"), tostringdict(result))
 

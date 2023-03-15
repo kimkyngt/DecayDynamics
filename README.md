@@ -5,7 +5,7 @@
 - Notation following [2].
 
 $$\begin{gathered}
-\mathscr{H}=\hbar \sum_{q = -1}^1 J_{q} \hat{\Sigma}_{q}^{\dagger}  + \sum_{i = g, e} \mu_B g_i \mathbf{F}^i \cdot \mathbf{B} \\
+\mathscr{H}= \sum_{q = -1}^1 \sum_{i = g, e} \mu_B g_i \mathbf{F}^i \cdot \mathbf{B} \\
 \mathscr{L}[\rho]=\sum_{q = -1}^1 \frac{\Gamma_{q}}{2}\left(2 \hat{\Sigma}_{ q^{\prime}} \rho \hat{\Sigma}_{q}^{\dagger}-\hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{q} \rho -\rho \hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{q} \right) \\
 J_{q}=0 \\
 \Gamma_{q}=\frac{2 \mu_0 \omega_0^2}{\hbar}|\wp|^2 \hat{\mathbf{e}}_q \cdot \operatorname{Im} \mathbf{G}\left(\mathbf{0}, \mathbf{0}, \omega_0\right) \cdot \hat{\mathbf{e}}_{q}^* = 1\ [\text{Simulation unit}] \\

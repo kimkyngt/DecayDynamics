@@ -171,16 +171,26 @@ function plot_dynamics(parameters::Dict; kwargs...)
     for indx in [1, 2, 3]
         fig = plot(ylab="Coherence, Level-$indx, $(F_i[indx])", legend=:best,)
         # Plot each sublevel's coherence
-        mycolor = cgrad(:Spectral, Int(2*F_i[indx]+1), categorical=true)
+        # mycolor = cgrad(:Spectral, Int(2*F_i[indx]+1), categorical=true)
         blank_state = [projector(Ket(b_i[ii])) for ii in [1, 2, 3]]
-        for ii in range(1, Int(F_i[indx]*2))
-            spin_l = F_i[indx] - ii
+        for ii in range(1, Int(3))
             spin_h = F_i[indx] - (ii-1)
+            spin_l = F_i[indx] - ii
+            spin_ll = F_i[indx] - (ii+1)
             _blank_state = copy(blank_state)
             _blank_state[indx] = projector(Fm_state(F_i[indx], spin_h), dagger(Fm_state(F_i[indx], spin_l)))
             state_to_plot = directsum(_blank_state...)
-            plot!(fig, t_out, real.(expect(state_to_plot, ρ_t)), label="($spin_h, $spin_l)", color=mycolor[ii])
-            plot!(fig, t_out, imag.(expect(state_to_plot, ρ_t)), label="", color=mycolor[ii], ls=:dash)
+            plot!(fig, t_out, real.(expect(state_to_plot, ρ_t)), label="($spin_h, $spin_l)", 
+            # color=mycolor[ii], 
+            ylim=(-0.5, 0.5),)
+            # plot!(fig, t_out, imag.(expect(state_to_plot, ρ_t)), label="", color=mycolor[ii], ls=:dash,  )
+            _blank_state = copy(blank_state)
+            _blank_state[indx] = projector(Fm_state(F_i[indx], spin_h), dagger(Fm_state(F_i[indx], spin_ll)))
+            state_to_plot = directsum(_blank_state...)
+            plot!(fig, t_out, real.(expect(state_to_plot, ρ_t)), label="($spin_h, $spin_ll)", 
+            # color=mycolor[ii], 
+            ls=:dot, ylim=(-0.5, 0.5),)
+            # plot!(fig, t_out, imag.(expect(state_to_plot, ρ_t)), label="", color=mycolor[ii],  ls=:dashdot)
         end
         push!(figs, fig)
     end

@@ -105,7 +105,7 @@ function get_animation(experiment::Dict;kwargs...)
     anim = @animate for ii in eachindex(t_out)
         # Update the plot with the i-th frame
         tlabel = t_out[ii]
-        draw_radiation_pattern(ρ_t[ii], title="Time = $tlabel/Γ")
+        draw_radiation_pattern(ρ_t[ii], title="Time = $tlabel/Γ"; kwargs...)
         next!(p)
     end
     return anim
@@ -131,12 +131,11 @@ function evolve_master(parameters::Dict)
     b_e = SpinBasis(F_e)
     b_g = SpinBasis(F_g)
     q_list = [-1, 0, 1]
-    H = sum(interaction.Omega([0, 0, 0], [0, 0, 0], ϵ_q(q), ϵ_q(q)) * dagger(Σ_q(q, F_e, F_g)) * Σ_q(q, F_e, F_g) for q in q_list)
-    H += 2*π*field_x*(g_e*sigmax(b_e)  ⊕ g_g*sigmax(b_g))/2
+    H = 2*π*field_x*(g_e*sigmax(b_e)  ⊕ g_g*sigmax(b_g))/2
     H += 2*π*field_y*(g_e*sigmay(b_e)  ⊕ g_g*sigmay(b_g))/2
     H += 2*π*field_z*(g_e*sigmaz(b_e)  ⊕ g_g*sigmaz(b_g))/2
     H = sparse(H)
-    J = [sqrt(interaction.Gamma([0, 0, 0], [0, 0, 0], ϵ_q(q), ϵ_q(q)))*Σ_q(q, F_e, F_g) for q in q_list]
+    J = [Σ_q(q, F_e, F_g) for q in q_list]
     t_out, ρ_t = timeevolution.master_h(tspan, ρ_0, H, J)
     result = copy(parameters)
     @pack! result = t_out, ρ_t
@@ -149,40 +148,50 @@ Plot time evolution data
 function plot_dynamics(parameters::Dict; kwargs...)
     @unpack ρ_t, t_out, F_e, F_g = parameters
     # Plot population dynamics
-    palette_e = cgrad(:jet, Int(2*F_e+1), categorical=true)
-    palette_g = cgrad(:jet, Int(2*F_g+1), categorical=true)
+    # palette_e = cgrad(:Spectral, Int(2*F_e+1), categorical=true)
+    # palette_g = cgrad(:Spectral, Int(2*F_g+1), categorical=true)
     b_e = SpinBasis(F_e)
     b_g = SpinBasis(F_g)
-    fig1 = plot(ylab="Excited, $F_e")
-    plot!(fig1, t_out, real.(expect(one(b_e) ⊕ 0*one(b_g), ρ_t)), label="Tr(ρᵉᵉ)", legend=:right, ls=:dash, lc=:black)
+    fig1 = plot(ylab="Excited, $F_e", xlab="t/Γ", )
     plot!(fig1, t_out, real.(expect(one(b_e) ⊕ one(b_g), ρ_t)), label="Tr(ρ)", legend=:right, ls=:solid, lc=:black)
+    plot!(fig1, t_out, real.(expect(one(b_e) ⊕ 0*one(b_g), ρ_t)), label="Tr(ρᵉᵉ)", legend=:right, ls=:dash, lc=:black)
     for ii in range(1, Int(F_e*2+1))
         spin = F_e - (ii-1)
         state_to_plot = dagger(normalize((sigmam(b_e)^(ii-1) * spinup(b_e)) ⊕ Ket(b_g) ))
-        plot!(fig1, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", color=palette_e[ii])
+        plot!(fig1, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", 
+        # color=palette_e[ii],
+        )
     end
-    fig2 = plot(ylab="Ground, $F_g", xlab="Time", leg=:right)
+    fig2 = plot(ylab="Ground, $F_g", xlab="t/Γ", leg=:right)
     plot!(fig2, t_out, real.(expect(0*one(b_e) ⊕ one(b_g), ρ_t)), label="Tr(ρᵍᵍ)", legend=:right, ls=:dash, lc=:black)
     for ii in range(1, Int(F_g*2+1))
         spin = F_g - (ii-1)
         state_to_plot = dagger(normalize( Ket(b_e) ⊕ (sigmam(b_g)^(ii-1) * spinup(b_g)) ))
-        plot!(fig2, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", color=palette_g[ii])
+        plot!(fig2, t_out, real.(expect(projector(state_to_plot), ρ_t)), label="m = $spin", 
+        # color=palette_g[ii],
+        )
     end
     # excited, coherene
-    fig3 = plot(ylab="Coherence, e", xlab="Time")
+    fig3 = plot(ylab="Coherence, e", xlab="t/Γ")
     for ii in range(1, Int(F_e*2))
         spin_l = F_e - (ii-1)
         spin_h = F_e - ii
         state_to_plot = (Fm_state(F_e, spin_h) ⊗ dagger(Fm_state(F_e, spin_l))) ⊕ Operator(b_g, b_g, zeros(length(b_g), length(b_g))) 
-        plot!(fig3, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵉᵉ($spin_h, $spin_l)", color=palette_e[ii])
+        plot!(fig3, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵉᵉ($spin_h, $spin_l)",
+        ylim=(-0.5, 0.5), 
+        # color=palette_e[ii],
+        )
     end
 
-    fig4 = plot(ylab="Coherence, g", xlab="Time")
+    fig4 = plot(ylab="Coherence, g", xlab="t/Γ")
     for ii in range(1, Int(F_g*2))
         spin_h = F_g - (ii-1)
         spin_l = F_g - ii
         state_to_plot = Operator(b_e, b_e, zeros(length(b_e), length(b_e))) ⊕ (Fm_state(F_g, spin_h) ⊗ dagger(Fm_state(F_g, spin_l)))
-        plot!(fig4, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵍᵍ($spin_h, $spin_l)", color=palette_g[ii])
+        plot!(fig4, t_out, real.(expect(state_to_plot, ρ_t)), label="ρᵍᵍ($spin_h, $spin_l)",
+        ylim=(-0.5, 0.5),
+        # color=palette_g[ii],
+        )
     end
 
     return plot(fig1, fig2, fig3, fig4, layout=(2, 2), size=(1200, 800), margins=5Plots.mm;kwargs...)
