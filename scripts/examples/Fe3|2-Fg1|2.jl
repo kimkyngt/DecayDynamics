@@ -30,9 +30,9 @@ g_g = 0.3
 # g_e = 1.0; g_g = 3
 # file_name_prefix="[Example]m_e=3|2,m_e=1|2,(g_e,g_g)=(1, 3)"
 
-ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e) + Fm_state(F_e, F_e-2)) ⊕ Ket(SpinBasis(F_g))))
+ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e) + 1im* Fm_state(F_e, F_e-2)) ⊕ Ket(SpinBasis(F_g))))
 g_e = 1.0; g_g = 3
-file_name_prefix="[Example]m_e=3|2,m_e=-1|2,(g_e,g_g)=(1, 3)"
+file_name_prefix="[Example]m_e=3|2,imm_e=-1|2,(g_e,g_g)=(1, 3)"
 
 
 parameters = @dict F_e F_g ρ_0 tspan field_x field_z field_y g_e g_g 

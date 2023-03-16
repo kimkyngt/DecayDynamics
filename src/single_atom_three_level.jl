@@ -93,6 +93,41 @@ function draw_radiation_pattern(ρ::Operator, F_i::Vector{<:Rational}, nang::Int
     return plt
 end
 
+"""
+Compute signal on the detector
+"""
+function get_detector_signal(ρ::Operator, F_i::Vector{<:Rational}, ; kwargs...)
+    θ = range(0, π, length = nang)
+    ϕ = range(0, 2π, length  = nang)
+    x, y, z = polar_2_xyz(θ, ϕ, 1.5*ones(length(θ)))
+
+    intensity_r = zero(x)
+    for I in CartesianIndices(x)
+        i, j = I[1], I[2]
+        intensity_r[i, j] = get_intensity([x[i, j], y[i, j], z[i, j]], ρ, F_i)
+    end
+    intensity_r = intensity_r/maximum(intensity_r) # normalize
+    data_x, data_y, data_z = polar_2_xyz(θ, ϕ, intensity_r)
+
+    plt = surface(
+        data_x, data_y, data_z,
+        color = palette(:tab10)[1],
+        xlabel="x", ylabel="y", zlabel="z",
+        colorbar=false,
+        xlim=(-1.1, 1.1), 
+        ylim=(-1.1, 1.1), 
+        zlim=(-1.1, 1.1), 
+        xticks=[-1, 0, 1],
+        yticks=[-1, 0, 1],
+        zticks=[-1, 0, 1],
+        aspect_ratio=1,
+        dpi=200,
+        frame_style=:box,
+        ;kwargs...
+    )
+    return plt
+end
+
 
 """
 Get animation using Plot.jl's @animate macro. 
