@@ -47,9 +47,9 @@ filename = file_name_prefix*savename(tostringdict(parameters), connector="-", al
 @pack! result = filename
 
 # Save data and gif
-anim = gif( get_animation(result), datadir("three_level_hyperfine_single_atom", "examples", filename*".gif"), fps=5)
-savefig(plot_dynamics(result), datadir("three_level_hyperfine_single_atom", "examples", filename*".pdf"))
-savefig(plot_dynamics(result), datadir("three_level_hyperfine_single_atom", "examples", filename*".png"))
-wsave(datadir("three_level_hyperfine_single_atom", "examples", filename*".jld2"), tostringdict(result))
+# anim = gif( get_animation(result), datadir("three_level_hyperfine_single_atom", "examples", filename*".gif"), fps=5)
+# savefig(plot_dynamics(result), datadir("three_level_hyperfine_single_atom", "examples", filename*".pdf"))
+# savefig(plot_dynamics(result), datadir("three_level_hyperfine_single_atom", "examples", filename*".png"))
+# wsave(datadir("three_level_hyperfine_single_atom", "examples", filename*".jld2"), tostringdict(result))
 
 plot_dynamics(result)

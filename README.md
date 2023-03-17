@@ -8,7 +8,7 @@ $$\begin{gathered}
 \mathscr{H}= \sum_{q = -1}^1 \sum_{i = g, e} \mu_B g_i \mathbf{F}^i \cdot \mathbf{B} \\
 \mathscr{L}[\rho]=\sum_{q = -1}^1 \frac{\Gamma_{q}}{2}\left(2 \hat{\Sigma}_{ q^{\prime}} \rho \hat{\Sigma}_{q}^{\dagger}-\hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{q} \rho -\rho \hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{q} \right) \\
 J_{q}=0 \\
-\Gamma_{q}=\frac{2 \mu_0 \omega_0^2}{\hbar}|\wp|^2 \hat{\mathbf{e}}_q \cdot \operatorname{Im} \mathbf{G}\left(\mathbf{0}, \mathbf{0}, \omega_0\right) \cdot \hat{\mathbf{e}}_{q}^* = 1\ [\text{Simulation unit}] \\
+\Gamma_{q} = 1 \\
 \mathbf{G}\left(\mathbf{r}, \omega_0\right)=\frac{e^{\mathrm{i} k_0 r}}{4 \pi k_0^2 r^3}\left[\left(k_0^2 r^2+\mathrm{i} k_0 r-1\right) \mathbb{1} + \left(-k_0^2 r^2-3 \mathrm{i} k_0 r+3\right) \frac{\mathbf{r} \otimes \mathbf{r}}{r^2}\right] \\
 \hat{\Sigma}_{q}^{\dagger}=\sum_{m_g=-F_g}^{F_g} C_{m_g, q} \hat{\sigma}_{F_e m_g-q, F_g m_g} \\
 \hat{\sigma}_{F_e m_g-q, F_g m_g}=\left|F_e m_g-q \right> \left< F_g m_g\right| \\
