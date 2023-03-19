@@ -3,8 +3,8 @@ using DrWatson
 include("../src/single_atom_two_level.jl")
 
 # Parameters
-F_e = 3//2
-F_g = 3//2
+F_e = 1//1
+F_g = 0//1
 Fe = string(F_e.num)*"half"
 Fg = string(F_g.num)*"half"
 ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e) + 1*Fm_state(F_e, F_e-1)) ⊕ Ket(SpinBasis(F_g))))
@@ -15,7 +15,7 @@ tspan = 0:0.05:5
 # Bfield in units of Γ/2π
 field_x = 0.0
 field_y = 0.0
-field_z = 2
+field_z = 1
 # g-factor
 g_e = 1.0 
 g_g = 0.3
@@ -33,3 +33,5 @@ gr()
 # savefig(plot_dynamics(result), datadir("two_level_hyperfine_single_atom", filename*".pdf"))
 # wsave(datadir("two_level_hyperfine_single_atom", filename*".jld2"), tostringdict(result))
 
+plot_dynamics(result)
+gif( get_animation(result), fps=5)

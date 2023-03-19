@@ -9,16 +9,12 @@ $$\begin{gathered}
 \mathscr{L}[\rho]=\sum_{q = -1}^1 \frac{\Gamma_{q}}{2}\left(2 \hat{\Sigma}_{ q^{\prime}} \rho \hat{\Sigma}_{q}^{\dagger}-\hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{q} \rho -\rho \hat{\Sigma}_{q}^{\dagger} \hat{\Sigma}_{q} \right) \\
 J_{q}=0 \\
 \Gamma_{q} = 1 \\
-\mathbf{G}\left(\mathbf{r}, \omega_0\right)=\frac{e^{\mathrm{i} k_0 r}}{4 \pi k_0^2 r^3}\left[\left(k_0^2 r^2+\mathrm{i} k_0 r-1\right) \mathbb{1} + \left(-k_0^2 r^2-3 \mathrm{i} k_0 r+3\right) \frac{\mathbf{r} \otimes \mathbf{r}}{r^2}\right] \\
-\hat{\Sigma}_{q}^{\dagger}=\sum_{m_g=-F_g}^{F_g} C_{m_g, q} \hat{\sigma}_{F_e m_g-q, F_g m_g} \\
-\hat{\sigma}_{F_e m_g-q, F_g m_g}=\left|F_e m_g-q \right> \left< F_g m_g\right| \\
-C_{m_g, q}=(-1)^{F_g-m_g}\left(\begin{array}{llc}
-F_g & 1 & F_e \\
--m_g & q & m_g-q
-\end{array}\right)
+\hat{\Sigma}_{q}^{\dagger}=\sum_{m_g=-F_g}^{F_g} C_{m_g, q}^{F_e, F_g} \hat{\sigma}_{F_e m_g+q, F_g m_g} \\
+\hat{\sigma}_{F_e m_g+q, F_g m_g}=\left|F_e m_g+q \right> \left< F_g m_g\right| \\
+C_{m_g, q}^{F_e, F_g} = \left< F_g, m_g;1, q|F_e, m_g+q\right>
 \end{gathered}$$
 
-$C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in Cartesian coordinate. 
+$C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in Cartesian coordinate. $\Gamma_q$ does not depend on a specific choise of the hyperfine state but depends on the fine structure state.
 
 To calculate the radiation power at $\mathbf{r}$, evaluate 
 
@@ -29,7 +25,8 @@ I(\mathbf{r}) = \left\langle \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdo
 , where the electric field operator is defined as
 
 $$\begin{gathered}
-\hat{\mathbf{E}}^{+}(\mathbf{r})= \mu_{0} \omega_{0}^2 \sum_{q = -1}^1 \mathbf{G} \left(\mathbf{r}, 0, \omega_{0} \right) \cdot \hat{\mathbf{e}}_{q}^{*} \wp \hat{\Sigma}_{j q}.
+\hat{\mathbf{E}}^{+}(\mathbf{r})= \mu_{0} \omega_{0}^2 \sum_{q = -1}^1 \mathbf{G} \left(\mathbf{r}, 0, \omega_{0} \right) \cdot \hat{\mathbf{e}}_{q}^{*} \wp \hat{\Sigma}_{j q} \\
+\mathbf{G}\left(\mathbf{r}, \omega_0\right)=\frac{e^{\mathrm{i} k_0 r}}{4 \pi k_0^2 r^3}\left[\left(k_0^2 r^2+\mathrm{i} k_0 r-1\right) \mathbb{1} + \left(-k_0^2 r^2-3 \mathrm{i} k_0 r+3\right) \frac{\mathbf{r} \otimes \mathbf{r}}{r^2}\right]
 \end{gathered}$$
 
 
@@ -45,11 +42,8 @@ First we define atomic lowering operator again.
 
 $$
 \begin{gathered}
-{\hat{\Sigma}_{q}^{F_1, F_2}}^{\dagger}=\sum_{m_2=-F_2}^{F_2} C_{m_2, q}^{F_1, F_2} \hat{\sigma}_{F_1, m_2-q, F_2, m_2} \\
-C_{m_2, q}^{F_1, F_2} = (-1)^{F_2-m_2}\left(\begin{array}{llc}
-F_2 & 1 & F_1 \\
--m_2 & q & m_2-q
-\end{array}\right)
+{\hat{\Sigma}_{q}^{F_1, F_2}}^{\dagger}=\sum_{m_2=-F_2}^{F_2} C_{m_2, q}^{F_1, F_2} \hat{\sigma}_{F_1, m_2+q, F_2, m_2} \\
+C_{m_2, q}^{F_1, F_2} = \left< F_2, m_2;1, q|F_1, m_2+q\right>
 \end{gathered}
 $$
 
@@ -71,6 +65,14 @@ For the Hamiltonian, we have rotating terms.
 $$
 \mathscr{H}=\hbar \sum_{i = 1}^3 \mu_B g_i \mathbf{F}^i \cdot \mathbf{B}
 $$
+
+<!-- ### Laser excitation
+
+We expect geometric constraints of the superposition state of level-1. 
+
+### Branching ratio
+When an atom in state in certain hyperfine state,  -->
+
 
 ## Many particle, multi level
 

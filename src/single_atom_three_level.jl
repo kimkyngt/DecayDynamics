@@ -1,4 +1,5 @@
-using Plots, QuantumOptics, CollectiveSpins, LaTeXStrings, WignerSymbols, ProgressMeter
+using Plots, QuantumOptics, CollectiveSpins, LaTeXStrings, WignerSymbols, ProgressMeter, LinearAlgebra
+import Rotations: RotX, RotZ
 
 """ 
 Get |F, m>
@@ -21,8 +22,7 @@ end
 Atomic lowering operator with hyperfine structure. Spherical basis.
 """
 function Σ_q(q::Int, F_1, F_2)
-    # Prevent the case where q-m is larger than F_1
-    return sparse(dagger(sum(clebschgordan(F_2, -m, 1, q, F_1)*σ(F_1, m - q, F_2, m) for m = -F_2:1:F_2 if abs(q-m) <= F_1 )))
+    return sparse(dagger(sum(clebschgordan(F_2, m, 1, q, F_1)*σ(F_1, m + q, F_2, m) for m = -F_2:1:F_2 if abs(m + q) <= F_1 )))
 end
 
 """
@@ -59,7 +59,7 @@ function get_intensity(r::Vector, ρ::Operator, F_i::Vector{<:Rational})
 end
 
 """
-Draw radiation pattern
+Draw radiation pattern.
 """
 function draw_radiation_pattern(ρ::Operator, F_i::Vector{<:Rational}, nang::Int=20,; kwargs...)
     θ = range(0, π, length = nang)
@@ -94,12 +94,12 @@ function draw_radiation_pattern(ρ::Operator, F_i::Vector{<:Rational}, nang::Int
 end
 
 """
-Compute signal on the detector
+Plot signal over all 4pi solid angle.
 """
 function get_detector_signal(ρ::Operator, F_i::Vector{<:Rational}, ; kwargs...)
     θ = range(0, π, length = nang)
     ϕ = range(0, 2π, length  = nang)
-    x, y, z = polar_2_xyz(θ, ϕ, 1.5*ones(length(θ)))
+    x, y, z = polar_2_xyz(θ, ϕ, ones(length(θ)))
 
     intensity_r = zero(x)
     for I in CartesianIndices(x)
@@ -167,6 +167,13 @@ function evolve_master(parameters::Dict)
     H += π*directsum([Bfield[3]*g_i[ii]*sigmaz(SpinBasis(F_i[ii])) for ii in [1, 2, 3]]...)
     H = sparse(H)
     J = vcat([sqrt(Γ_i[1])*(Σ_q(q, F_i[1], F_i[2]) ⊕ one(SpinBasis(F_i[3]))) for q in q_list], [sqrt(Γ_i[2])*(one(SpinBasis(F_i[1])) ⊕ Σ_q(q, F_i[2], F_i[3])) for q in q_list])
+    p = Progress(length(tspan), "Solving master equation...")
+    function fout(t, rho) 
+        # function for checking the progress
+        next!(p)
+        return rho
+    end
+    # t_out, ρ_t = timeevolution.master_h(tspan, ρ_0, H, J, fout=fout)
     t_out, ρ_t = timeevolution.master_h(tspan, ρ_0, H, J)
     result = copy(parameters)
     @pack! result = t_out, ρ_t
@@ -176,15 +183,15 @@ end
 """
 Plot time evolution data
 """
-function plot_dynamics(parameters::Dict; kwargs...)
-    @unpack F_i, g_i, Γ_i, Bfield, ρ_t, t_out = parameters
+function plot_dynamics(result::Dict; kwargs...)
+    @unpack F_i, g_i, Γ_i, Bfield, ρ_t, t_out = result
 
     b_i = [SpinBasis(F_i[ii]) for ii in [1, 2, 3]]
     
     figs = []
     # Plot population
     for indx in [1, 2, 3]
-        fig = plot(ylab="Population, Level-$indx, $(F_i[indx])", legend=:best,)
+        fig = plot(ylab="Population, Level-$indx, $(F_i[indx])", legend=:best, xlab="t/Γ")
         id_ops = [one(b_i[ii]) for ii in [1, 2, 3]]
         id_vec = circshift([1, 0, 0], indx-1)
         # Plot population of level-indx
@@ -204,7 +211,7 @@ function plot_dynamics(parameters::Dict; kwargs...)
         push!(figs, fig)
     end
     for indx in [1, 2, 3]
-        fig = plot(ylab="Coherence, Level-$indx, $(F_i[indx])", legend=:best,)
+        fig = plot(ylab="Coherence, Level-$indx, $(F_i[indx])", legend=:best, xlab="t/Γ")
         # Plot each sublevel's coherence
         # mycolor = cgrad(:Spectral, Int(2*F_i[indx]+1), categorical=true)
         blank_state = [projector(Ket(b_i[ii])) for ii in [1, 2, 3]]
@@ -230,5 +237,79 @@ function plot_dynamics(parameters::Dict; kwargs...)
         push!(figs, fig)
     end
 
-    return plot(figs..., size=(1500, 800), layout=(2, 3), margins=30Plots.px;kwargs...)
+    # return plot(figs..., size=(1500, 800), layout=(2, 3), margins=30Plots.px;kwargs...)
+    return figs
+end
+
+
+"""
+Plot time-dependent radiation power at (θ, ϕ)
+"""
+function get_detector_signal(result::Dict, θ::Number, ϕ::Number)
+    @unpack F_i, ρ_t, t_out = result
+    r = [cos(θ)*cos(ϕ), cos(θ)*sin(ϕ), sin(θ)]
+    I_t = [get_intensity(r, ρ, F_i) for ρ in ρ_t]
+    return t_out, I_t
+end
+
+"""
+Randomly sample unit vectors in NA centered at (theta, phi).
+Returns unit vector components x, y, z
+test: plot(sample_omega_on_sphere(10, 0.5, pi/2, pi), st:scatter)
+"""
+function sample_omega_on_sphere(Nsample::Int, NA::Number, theta::Number, phi::Number)
+    ang = asin(NA)
+    theta_sample = 2*ang*(rand(Nsample) .- 0.5)
+    phi_sample = 2*pi*rand(Nsample)
+    u = []
+    for ii in eachindex(theta_sample)
+        push!(u, RotZ(phi)*RotX(theta)*[
+            sin(theta_sample[ii])*cos(phi_sample[ii]), 
+            sin(theta_sample[ii])*sin(phi_sample[ii]), 
+            cos(theta_sample[ii])
+            ])
+    end
+    x, y, z = [], [], []
+    for ii in eachindex(u)
+        push!(x, u[ii][1]) 
+        push!(y, u[ii][2])
+        push!(z, u[ii][3])
+    end
+    return x, y, z
+end
+
+"""
+Draw a unit sphere. Nsample determines the density
+"""
+function draw_unit_sphere(Nsample=20, )
+    θ = range(0, π, length = Nsample)
+    ϕ = range(0, 2π, length  = Nsample)
+    fig = plot(
+        polar_2_xyz(θ, ϕ, ones(length(θ))),
+        st=:surface,
+        color=:grey, 
+        legend=false,
+        )
+    return fig
+end
+
+
+"""
+Average the detector signal over detector NA. 
+"""
+function plot_detector_signal(result::Dict, θ_center::Number, ϕ_center::Number, NA::Number=0.2, Nsample::Int=10;kwargs...)
+    @unpack F_i, ρ_t, t_out = result
+    # Sample detector position
+    x, y, z = sample_omega_on_sphere(Nsample, NA, θ_center, ϕ_center)
+    # Plot detector signal
+    It = []
+    for jj in eachindex(ρ_t)
+        push!(It, sum(get_intensity([x[ii], y[ii], z[ii]], ρ_t[jj], F_i) for ii in eachindex(x))/Nsample)
+    end
+    fig_sig = plot(t_out, It, xlab="t/Γ", ylab="Detector signal", legend=false, color=1)
+    # Plot detector gemetry
+    fig_det = draw_unit_sphere()
+    ang_to_print = Int(round(θ_center/π*180))
+    plot!(fig_det, x, y, z, st=:scatter, color=1, xlab="y", ylab="x", zlab="z", ticks=false, title="Detector: NA=$NA, θ=$(ang_to_print)ᵒ")
+    return [fig_sig, fig_det]
 end

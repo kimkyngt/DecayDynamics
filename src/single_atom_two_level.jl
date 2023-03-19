@@ -22,7 +22,7 @@ Atomic lowering operator with hyperfine structure. Spherical basis.
 """
 function Σ_q(q::Int, F_e, F_g)
     # Prevent the case where q-m is larger than F_e
-    return sparse(dagger(sum(clebschgordan(F_g, -m, 1, q, F_e)*σ(F_e, m - q, F_g, m) for m = -F_g:1:F_g if abs(q-m) <= F_e )))
+    return sparse(dagger(sum(clebschgordan(F_g, m, 1, q, F_e)*σ(F_e, m + q, F_g, m) for m = -F_g:1:F_g if abs(m+q) <= F_e )))
 end
 
 """
