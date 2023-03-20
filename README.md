@@ -76,19 +76,19 @@ From the reference [1], equation (7.283), the reduced dipole moment of the trans
 
 $$\begin{aligned}
 \left< J\|\mathbf{d}\| J^{\prime}\right> & \equiv \left< L S J\|\mathbf{d}\| L^{\prime} S J^{\prime} \right> \\
-& = \left< L\|\mathbf{d}\| L^{\prime} \right> (-1)^{J^{\prime}+L+1+S} \sqrt{\left( 2 J^{\prime}+1 \right) (2 L+1)} \left\{ \begin{array}{ccc}
+& = \left< L\|\mathbf{d}\| L^{\prime} \right> (-1)^{J^{\prime}+L+1+S} \sqrt{\left( 2 J^{\prime}+1 \right) (2 L+1)} \left\lbrace \begin{array}{ccc}
 L & L^{\prime} & 1 \\
 J^{\prime} & J & S \\
-\end{array} \right\}
+\end{array} \right\rbrace
 \end{aligned}$$
 
 Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}, \quad J^{\prime} \in (0, 1, 2)$ decay, $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be 
 
 $$
-\left| \left< {}^{3}{D}_{1} \| \mathbf{d} \| {}^3{P}_{J^{\prime}} \right> \right|^2 = (2J^{\prime}+1)(2\cdot 2+1)\left| \left\{\begin{array}{ccc}
+\left| \left< {}^{3}{D}_{1} \| \mathbf{d} \| {}^3{P}_{J^{\prime}} \right> \right|^2 = (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
 J^{\prime} & 1 & 1 \\
-\end{array}\right\}  \right|^2 
+\end{array}\right\rbrace  \right|^2 
 $$
 
 This gives the ratio $\frac{5}{9}:\frac{5}{12}:\frac{1}{36}$. The actual decay rate will depends on the frequency of the transition. For the decay rate $\Gamma$ from $e$ to $g$, 
@@ -110,18 +110,18 @@ We now consider the hyperfine structure. The matrix element has the same form as
 $$
 \begin{aligned}
 \left< F\|\mathbf{d}\| F^{\prime}\right> & \equiv\left< J I F\|\mathbf{d}\| J^{\prime} I F^{\prime}\right> \\
-& =(-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\{\begin{array}{ccc}
+& =(-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\lbrace\begin{array}{ccc}
 J & J^{\prime} & 1 \\
 F^{\prime} & F & I
-\end{array}\right\} \\
-& = \left< L\|\mathbf{d}\| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\{\begin{array}{ccc}
+\end{array}\right\rbrace \\
+& = \left< L\|\mathbf{d}\| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\lbrace\begin{array}{ccc}
 L & L^{\prime} & 1 \\
 J^{\prime} & J & S \\
-\end{array}\right\} \\
-& \times (-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\{\begin{array}{ccc}
+\end{array}\right\rbrace \\
+& \times (-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\lbrace\begin{array}{ccc}
 J & J^{\prime} & 1 \\
 F^{\prime} & F & I
-\end{array}\right\} .
+\end{array}\right\rbrace .
 \end{aligned}
 $$
 
@@ -129,14 +129,14 @@ $$
 \begin{aligned}
 \left| \left< {}^{3}{D}_{1}, F\|\mathbf{d}\| {}^3{P}_{J^{\prime}}, F^{\prime} \right> \right|^2 =& (2J^{\prime} + 1)(2 \cdot 2 + 1)(2F^{\prime} + 1)(2 \cdot 1 + 1) \\ 
 & \times \left|
-   \left\{\begin{array}{ccc}
+   \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
 J^{\prime} & 1 & 1 \\
-\end{array}\right\}
-\left\{\begin{array}{ccc}
+\end{array}\right\rbrace
+\left\lbrace\begin{array}{ccc}
 1 & J^{\prime} & 1 \\
 F^{\prime} & F & 9/2
-\end{array}\right\}\right|^2 \left| \left< L\|\mathbf{d}\| L^{\prime}\right> \right|^2
+\end{array}\right\rbrace\right|^2 \left| \left< L\|\mathbf{d}\| L^{\prime}\right> \right|^2
 \end{aligned}
 $$
 
