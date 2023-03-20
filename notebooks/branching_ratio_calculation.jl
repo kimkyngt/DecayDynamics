@@ -46,6 +46,30 @@ gammas[2]/gammas[1] # Gamma with wavelength dependence.
 # ╔═╡ 488602f1-f544-4932-83cb-ce90ce2c8f0c
 gammas_yb[2]/gammas_yb[1] # Yb case
 
+# ╔═╡ 7dc781f0-1945-4e2a-aa4f-3f509241f9e2
+md"## Hyperfine branching ratio"
+
+# ╔═╡ ae838b6f-43d8-426c-8398-dfc3e9e0c3ef
+begin
+	# Hyperfine-F dependence check
+	Fe = [11//2, 9//2, 7//2]
+	Jg = [0, 1, 2]
+	Fg = [[9//2], [11//2, 9//2, 7//2], [13//2, 11//2, 9//2, 7//2, 5//2]]
+
+	data = Dict()
+	data["Fe"] = Fe[1] # Change this index to select a specific hyperfine D state.
+	for ii in eachindex(Jg)
+		data["Jg=$(Jg[ii])"] = Dict()
+		Fgsum = 0
+		for jj in eachindex(Fg[ii])
+			data["Jg=$(Jg[ii])"]["Fg=$(Fg[ii][jj])"] = round(float((2*Jg[ii]+1)*5*(2*Fg[ii][jj]+1)*3*abs2(wigner6j(2, 1, 1, Jg[ii], 1, 1))*abs2(wigner6j(1, Jg[ii], 1, Fg[ii][jj], data["Fe"], 9//2))), digits=4)
+			Fgsum += data["Jg=$(Jg[ii])"]["Fg=$(Fg[ii][jj])"]
+		end
+		data["Jg=$(Jg[ii])"]["Sum"] = Fgsum
+	end
+	data
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -66,7 +90,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "6e49ebe4753b765c4063851ff510caed83fc20a3"
+project_hash = "4c0db7a74fce7a50dd09b3e0fc68b9fd171fa93f"
 
 [[deps.AbstractAlgebra]]
 deps = ["GroupsCore", "InteractiveUtils", "LinearAlgebra", "MacroTools", "Markdown", "Random", "RandomExtensions", "SparseArrays", "Test"]
@@ -1403,5 +1427,7 @@ version = "1.4.1+0"
 # ╠═36f58fea-36dd-4c15-ad1c-343291cf9af1
 # ╠═f5135c80-4eb6-4c32-90f6-1b20845da1e1
 # ╠═488602f1-f544-4932-83cb-ce90ce2c8f0c
+# ╠═7dc781f0-1945-4e2a-aa4f-3f509241f9e2
+# ╠═ae838b6f-43d8-426c-8398-dfc3e9e0c3ef
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

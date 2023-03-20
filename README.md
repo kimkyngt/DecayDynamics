@@ -71,6 +71,9 @@ $$
 We expect geometric constraints of the superposition state of level-1.  -->
 
 ## Branching ratio
+Calculations are done on the notebook in `notebooks/branching_ratio_calculation.jl`.
+
+
 From the reference [1], equation (7.283), the reduced dipole moment of the transition between two different fine structure states are given by
 
 
@@ -85,7 +88,7 @@ J^{\prime} & J & S \\
 Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}, \quad J^{\prime} \in (0, 1, 2)$ decay, $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be 
 
 $$
-\left| \left< {}^{3}{D}_{1} \| \mathbf{d} \| {}^3{P}_{J^{\prime}} \right> \right|^2 = (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
+\left| \left< {}^{3}{D}_{1} \| \mathbf{d} \| {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
 J^{\prime} & 1 & 1 \\
 \end{array}\right\rbrace  \right|^2 
@@ -136,9 +139,12 @@ J^{\prime} & 1 & 1 \\
 \left\lbrace\begin{array}{ccc}
 1 & J^{\prime} & 1 \\
 F^{\prime} & F & 9/2
-\end{array}\right\rbrace\right|^2 \left| \left< L\|\mathbf{d}\| L^{\prime}\right> \right|^2
+\end{array}\right\rbrace\right|^2 \left| \left< L=2\|\mathbf{d}\| L^{\prime}=1\right> \right|^2
 \end{aligned}
 $$
+
+We can sum over all different ground state for a given $F$, to see if there is any $F$-dependence on the decay rate.
+
 
 ## Many particle, multi level
 
