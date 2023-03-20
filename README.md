@@ -143,7 +143,8 @@ F^{\prime} & F & 9/2
 \end{aligned}
 $$
 
-We can sum over all different ground state for a given $F$, to see if there is any $F$-dependence on the decay rate.
+Summary plot:
+![hyperfine_branching_ratio](hyperfine_branching.svg)
 
 
 ## Many particle, multi level
