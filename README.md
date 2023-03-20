@@ -76,10 +76,10 @@ From the reference [1], equation (7.283), the reduced dipole moment of the trans
 $$
 \begin{aligned}
 \left< J\|\mathbf{d}\| J^{\prime}\right> & \equiv\left< L S J\|\mathbf{d}\| L^{\prime} S J^{\prime}\right> \\
-& =\left< L\|\mathbf{d}\| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\{\begin{array}{ccc}
+& =\left< L\|\mathbf{d}\| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\{ \begin{array}{ccc}
 L & L^{\prime} & 1 \\
 J^{\prime} & J & S \\
-\end{array}\right\}
+\end{array} \right\}
 \end{aligned}
 $$
 
