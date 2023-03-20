@@ -73,15 +73,17 @@ We expect geometric constraints of the superposition state of level-1.  -->
 ## Branching ratio
 From the reference [1], equation (7.283), the reduced dipole moment of the transition between two different fine structure states are given by
 
-$$
-\begin{aligned}
+$$\begin{aligned}
+\left< 1 \right>
+\end{aligned}$$
+
+$$\begin{aligned}
 \left< J\|\mathbf{d}\| J^{\prime}\right> & \equiv\left< L S J\|\mathbf{d}\| L^{\prime} S J^{\prime}\right> \\
 & =\left< L\|\mathbf{d}\| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\{ \begin{array}{ccc}
 L & L^{\prime} & 1 \\
 J^{\prime} & J & S \\
 \end{array} \right\}
-\end{aligned}
-$$
+\end{aligned}$$
 
 Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}, \quad J^{\prime} \in (0, 1, 2)$ decay, $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be 
 
