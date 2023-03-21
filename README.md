@@ -73,7 +73,7 @@ We expect geometric constraints of the superposition state of level-1.  -->
 
 ## Branching ratio
 
-Calculations are done on the notebook in `notebooks/branching_ratio_calculation.jl`.
+Calculations can be found in `notebooks/branching_ratio_calculation.jl`.
 
 From the reference [1], equation (7.283), the reduced dipole moment of the transition between two different fine structure states are given by
 
@@ -85,7 +85,7 @@ J^{\prime} & J & S \\
 \end{array} \right\rbrace
 \end{aligned}$$
 
-Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}$, where $J^{\prime} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be
+Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rarr {}^3{P}_{J^{\prime}}$, where $J^{\prime} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be
 
 $$
 \left| \left< {}^{3}{D}_{1} || \mathbf{d} || {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
@@ -146,7 +146,7 @@ $$
 Summary plot:
 ![hyperfine_branching_ratio](hyperfine_branching.svg)
 
-## Many particle, multi level
+## Many particle, multilevel
 
 TBA?
 <!-- 
