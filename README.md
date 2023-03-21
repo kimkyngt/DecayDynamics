@@ -29,8 +29,8 @@ $$\begin{gathered}
 \mathbf{G}\left(\mathbf{r}, \omega_0\right)=\frac{e^{\mathrm{i} k_0 r}}{4 \pi k_0^2 r^3}\left[\left(k_0^2 r^2+\mathrm{i} k_0 r-1\right) \mathbb{1} + \left(-k_0^2 r^2-3 \mathrm{i} k_0 r+3\right) \frac{\mathbf{r} \otimes \mathbf{r}}{r^2}\right]
 \end{gathered}$$
 
-
 ## Cascaded multilevel
+
 ### Schematics
 
 ```mermaid
@@ -62,6 +62,7 @@ $$
 $$
 
 For the Hamiltonian, we have rotating terms.
+
 $$
 \mathscr{H}=\hbar \sum_{i = 1}^3 \mu_B g_i \mathbf{F}^i \cdot \mathbf{B}
 $$
@@ -71,15 +72,14 @@ $$
 We expect geometric constraints of the superposition state of level-1.  -->
 
 ## Branching ratio
-Calculations are done on the notebook in `notebooks/branching_ratio_calculation.jl`.
 
+Calculations are done on the notebook in `notebooks/branching_ratio_calculation.jl`.
 
 From the reference [1], equation (7.283), the reduced dipole moment of the transition between two different fine structure states are given by
 
-
 $$\begin{aligned}
-\left< J\|\mathbf{d}\| J^{\prime}\right> & \equiv \left< L S J\|\mathbf{d}\| L^{\prime} S J^{\prime} \right> \\
-& = \left< L\|\mathbf{d}\| L^{\prime} \right> (-1)^{J^{\prime}+L+1+S} \sqrt{\left( 2 J^{\prime}+1 \right) (2 L+1)} \left\lbrace \begin{array}{ccc}
+\left< J||\mathbf{d}|| J^{\prime}\right> & \equiv \left< L S J||\mathbf{d}|| L^{\prime} S J^{\prime} \right> \\
+& = \left< L||\mathbf{d}|| L^{\prime} \right> (-1)^{J^{\prime}+L+1+S} \sqrt{\left( 2 J^{\prime}+1 \right) (2 L+1)} \left\lbrace \begin{array}{ccc}
 L & L^{\prime} & 1 \\
 J^{\prime} & J & S \\
 \end{array} \right\rbrace
@@ -88,13 +88,13 @@ J^{\prime} & J & S \\
 Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}, \quad J^{\prime} \in (0, 1, 2)$ decay, $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be 
 
 $$
-\left| \left< {}^{3}{D}_{1} \| \mathbf{d} \| {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
+\left| \left< {}^{3}{D}_{1} || \mathbf{d} || {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
 J^{\prime} & 1 & 1 \\
 \end{array}\right\rbrace  \right|^2 
 $$
 
-This gives the ratio $\frac{5}{9}:\frac{5}{12}:\frac{1}{36}$. The actual decay rate will depends on the frequency of the transition. For the decay rate $\Gamma$ from $e$ to $g$, 
+This gives the ratio $\frac{5}{9}:\frac{5}{12}:\frac{1}{36}$. The actual decay rate will depends on the frequency of the transition. For the decay rate $\Gamma$ from $e$ to $g$,
 
 $$
 \Gamma = \frac{\omega_0^3}{3\pi \epsilon_0 \hbar c^3}| \left< g|\mathbf{d}|e \right>|^2.
@@ -108,16 +108,16 @@ $$
 
 , which results in decay rates very close to [2].
 
-We now consider the hyperfine structure. The matrix element has the same form as before. 
+We now consider the hyperfine structure. The matrix element has the same form as before.
 
 $$
 \begin{aligned}
-\left< F\|\mathbf{d}\| F^{\prime}\right> & \equiv\left< J I F\|\mathbf{d}\| J^{\prime} I F^{\prime}\right> \\
+\left< F||\mathbf{d}|| F^{\prime}\right> & \equiv\left< J I F||\mathbf{d}|| J^{\prime} I F^{\prime}\right> \\
 & =(-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\lbrace\begin{array}{ccc}
 J & J^{\prime} & 1 \\
 F^{\prime} & F & I
 \end{array}\right\rbrace \\
-& = \left< L\|\mathbf{d}\| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\lbrace\begin{array}{ccc}
+& = \left< L||\mathbf{d}|| L^{\prime}\right>(-1)^{J^{\prime}+L+1+S} \sqrt{\left(2 J^{\prime}+1\right)(2 L+1)}\left\lbrace\begin{array}{ccc}
 L & L^{\prime} & 1 \\
 J^{\prime} & J & S \\
 \end{array}\right\rbrace \\
@@ -130,7 +130,7 @@ $$
 
 $$
 \begin{aligned}
-\left| \left< {}^{3}{D}_{1}, F\|\mathbf{d}\| {}^3{P}_{J^{\prime}}, F^{\prime} \right> \right|^2 =& (2J^{\prime} + 1)(2 \cdot 2 + 1)(2F^{\prime} + 1)(2 \cdot 1 + 1) \\ 
+\left| \left< {}^{3}{D}_{1}, F||\mathbf{d}|| {}^3{P}_{J^{\prime}}, F^{\prime} \right> \right|^2 =& (2J^{\prime} + 1)(2 \cdot 2 + 1)(2F^{\prime} + 1)(2 \cdot 1 + 1) \\ 
 & \times \left|
    \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
@@ -139,7 +139,7 @@ J^{\prime} & 1 & 1 \\
 \left\lbrace\begin{array}{ccc}
 1 & J^{\prime} & 1 \\
 F^{\prime} & F & 9/2
-\end{array}\right\rbrace\right|^2 \left| \left< L=2\|\mathbf{d}\| L^{\prime}=1\right> \right|^2
+\end{array}\right\rbrace\right|^2 \left| \left< L=2||\mathbf{d}|| L^{\prime}=1\right> \right|^2
 \end{aligned}
 $$
 
@@ -176,37 +176,44 @@ $$
 \hat{\mathbf{E}}^{+}(\mathbf{r})=\mu_0 \omega_0^2 \sum_{j=1}^N \sum_{q=-1}^1 \mathbf{G}\left(\mathbf{r}, \mathbf{r}_j, \omega_0\right) \cdot \hat{\mathbf{e}}_q^* \wp \hat{\Sigma}_{j q}
 $$ -->
 ## Questions
+
 - [ ] Do we expect the quantum beats if we project the polarization of the light so that we make different polarization of the light indistinguishible?
 
-
 ## Reference
-1.  D. A. Steck, Quantum and Atom Optics (2022).
-2.  A. Asenjo-Garcia, H. J. Kimble, D. E. Chang, Proc. Natl. Acad. Sci. U.S.A. 116, 25503–25511 (2019).
-3.  B. Zhu, J. Cooper, J. Ye, A. M. Rey, Phys. Rev. A. 94, 023612 (2016).
-4.  [`CollectiveSpins.jl`](https://qojulia.github.io/CollectiveSpins.jl/dev/descriptions/) theoretical description page.
 
-# Activating this project
+1. D. A. Steck, Quantum and Atom Optics (2022).
+
+2. A. Asenjo-Garcia, H. J. Kimble, D. E. Chang, Proc. Natl. Acad. Sci. U.S.A. 116, 25503–25511 (2019).
+
+3. B. Zhu, J. Cooper, J. Ye, A. M. Rey, Phys. Rev. A. 94, 023612 (2016).
+
+4. [`CollectiveSpins.jl`](https://qojulia.github.io/CollectiveSpins.jl/dev/descriptions/) theoretical description page.
+
+## Activating this project
 
 To (locally) reproduce this project, do the following:
 
 0. Download this code base. Notice that raw data are typically not included in the
    git-history and may need to be downloaded independently.
 1. Open a Julia console and do:
-   ```
-   julia> using Pkg
-   julia> Pkg.add("DrWatson") # install globally, for using `quickactivate`
-   julia> Pkg.activate("path/to/this/project")
-   julia> Pkg.instantiate()
-   ```
-   
+
+```julia
+julia> using Pkg
+julia> Pkg.add("DrWatson") # install globally, for using `quickactivate`
+julia> Pkg.activate("path/to/this/project")
+julia> Pkg.instantiate()
+```
+
 This will install all necessary packages for you to be able to run the scripts and
 everything should work out of the box, including correctly finding local paths.
 
 You may notice that most scripts start with the commands:
+
 ```julia
 using DrWatson
 @quickactivate "DecayDynamics"
 ```
+
 which auto-activate the project and enable local path handling from DrWatson.
 <!-- This code base is using the [Julia Language](https://julialang.org/) and
 [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
