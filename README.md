@@ -16,7 +16,7 @@ C_{m_g, q}^{F_e, F_g} = \left< F_g, m_g;1, q|F_e, m_g+q\right>
 
 $C_{m_g, q}$ is the Clebsch–Gordan coefficient, $\hat{\mathbf{e}}_q$ is the polarization vector in Cartesian coordinate. $\Gamma_q$ does not depend on a specific choise of the hyperfine state but depends on the fine structure state.
 
-To calculate the radiation power at $\mathbf{r}$, evaluate 
+To calculate the radiation power at $\mathbf{r}$, evaluate
 
 $$\begin{gathered}
 I(\mathbf{r}) = \left< \psi \right| \hat{\mathbf{E}}^{-} (\mathbf{r}) \cdot \hat{\mathbf{E}}^{+} (\mathbf{r}) \left| \psi \right>
@@ -53,7 +53,7 @@ $$
 \mathbf{G}\left(\mathbf{r}, \omega_i\right)=\frac{e^{\mathrm{i} k_i r}}{4 \pi k_i^2 r^3}\left[\left(k_i^2 r^2+\mathrm{i} k_i r-1\right) \mathbb{1} + \left(-k_i^2 r^2-3 \mathrm{i} k_i r+3\right) \frac{\mathbf{r} \otimes \mathbf{r}}{r^2}\right]
 $$
 
-However, this will not matter as long as we are considering a single atom. It will not change the angular dependence of the radiation pattern as well. 
+However, this will not matter as long as we are considering a single atom. It will not change the angular dependence of the radiation pattern as well.
 
 We set the decay rate of level-$i$ $\Gamma_q^i$ to be 10(1) for the level-1(2).
 
@@ -85,7 +85,7 @@ J^{\prime} & J & S \\
 \end{array} \right\rbrace
 \end{aligned}$$
 
-Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rarr {}^3{P}_{J^{\prime}}$, where $J^{\prime} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be
+Here, (un)primed numbers are for the (excited)ground states. For $^{3}{D}_{1} \rarr ^3{P}_{J^{\prime}}$, where $J^{\prime} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be
 
 $$
 \left| \left< {}^{3}{D}_{1} || \mathbf{d} || {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
