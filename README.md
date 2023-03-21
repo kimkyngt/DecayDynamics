@@ -85,13 +85,13 @@ J^{\prime} & J & S \\
 \end{array} \right\rbrace
 \end{aligned}$$
 
-Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}, \quad J^{\prime} \in (0, 1, 2)$ decay, $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be 
+Here, (un)primed numbers are for the (excited)ground states. For ${}^{3}{D}_{1} \rightarrow {}^3{P}_{J^{\prime}}$, where $J^{\prime} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be
 
 $$
 \left| \left< {}^{3}{D}_{1} || \mathbf{d} || {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
 J^{\prime} & 1 & 1 \\
-\end{array}\right\rbrace  \right|^2 
+\end{array}\right\rbrace  \right|^2
 $$
 
 This gives the ratio $\frac{5}{9}:\frac{5}{12}:\frac{1}{36}$. The actual decay rate will depends on the frequency of the transition. For the decay rate $\Gamma$ from $e$ to $g$,
@@ -100,10 +100,10 @@ $$
 \Gamma = \frac{\omega_0^3}{3\pi \epsilon_0 \hbar c^3}| \left< g|\mathbf{d}|e \right>|^2.
 $$
 
-The decay rate will be proportional to the cube of the frequency or the inverse cube of the wavelength. The transition wavelengths of ${}^3{P}_{J^{\prime}}$ are $(2.6, 2.74, 3.07)~\mu m$. The actual decay ratio, considering $\frac{1}{2.6^3}:\frac{1}{2.74^3}:\frac{1}{3.07^3} \approx 0.69:0.59:0.42$, will be
+The decay rate will be proportional to the cube of the frequency or the inverse cube of the wavelength. The transition wavelengths of ${}^3{P}_{J^{\prime}}$ are (2.60315, 2.7362, 3.06701) μm. The actual decay ratio will be
 
 $$
-\frac{5}{9}\frac{1}{2.6^3}:\frac{5}{12}\frac{1}{2.74^3}:\frac{1}{36}\frac{1}{3.07^3}
+\frac{5}{9}\frac{1}{2.6^3}:\frac{5}{12}\frac{1}{2.74^3}:\frac{1}{36}\frac{1}{3.07^3} = 0.597:0.385:0.018
 $$
 
 , which results in decay rates very close to [2].
@@ -130,7 +130,7 @@ $$
 
 $$
 \begin{aligned}
-\left| \left< {}^{3}{D}_{1}, F||\mathbf{d}|| {}^3{P}_{J^{\prime}}, F^{\prime} \right> \right|^2 =& (2J^{\prime} + 1)(2 \cdot 2 + 1)(2F^{\prime} + 1)(2 \cdot 1 + 1) \\ 
+\left| \left< {}^{3}{D}_{1}, F||\mathbf{d}|| {}^3{P}_{J^{\prime}}, F^{\prime} \right> \right|^2 =& (2J^{\prime} + 1)(2 \cdot 2 + 1)(2F^{\prime} + 1)(2 \cdot 1 + 1) \\
 & \times \left|
    \left\lbrace\begin{array}{ccc}
 2 & 1 & 1 \\
@@ -145,7 +145,6 @@ $$
 
 Summary plot:
 ![hyperfine_branching_ratio](hyperfine_branching.svg)
-
 
 ## Many particle, multi level
 
@@ -176,8 +175,6 @@ $$
 \hat{\mathbf{E}}^{+}(\mathbf{r})=\mu_0 \omega_0^2 \sum_{j=1}^N \sum_{q=-1}^1 \mathbf{G}\left(\mathbf{r}, \mathbf{r}_j, \omega_0\right) \cdot \hat{\mathbf{e}}_q^* \wp \hat{\Sigma}_{j q}
 $$ -->
 ## Questions
-
-- [ ] Do we expect the quantum beats if we project the polarization of the light so that we make different polarization of the light indistinguishible?
 
 ## Reference
 

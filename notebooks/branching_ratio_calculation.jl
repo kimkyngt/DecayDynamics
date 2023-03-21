@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 19f13e66-c6c7-11ed-3794-8d85f9b87968
-using Plots, Symbolics, LinearAlgebra, WignerSymbols
+using Plots, Symbolics, WignerSymbols, Unitful
 
 # ╔═╡ f7ef4177-afb1-411d-9aee-ce2dfd7643a6
 md"# Branching ratio calculation"
@@ -16,20 +16,23 @@ J = [0, 1, 2]
 # ╔═╡ 6638124d-d332-4af8-a489-fb982a51cdf8
 sq_d = (2*J .+ 1)*(2*2 + 1) .* (wigner6j.(2, 1, 1, J, 1, 1)).^2
 
+# ╔═╡ 34c72b4c-2c60-45b4-8406-ae7ab5ef0935
+ΔE_cm = [3841.5, 3654.7, 3260.5]*1u"cm^-1"
+
+# ╔═╡ 8b93026e-8cdf-485d-86f0-5ed58ac1fbef
+ΔE = uconvert.(u"μm", 1 ./ ΔE_cm)
+
 # ╔═╡ d5290fe8-3124-4644-af05-370191e92646
-wavelength_dep = round.(normalize(1 ./ [2.6, 2.74, 3.07].^3), digits=3)
+wavelength_dep = 1 ./ ustrip.(ΔE).^3
 
 # ╔═╡ 5679dabc-8648-4a50-95db-cd5faef71ab4
-wavelength_dep_Yb = round.(normalize(1 ./ [1.389, 1.54, 2.093].^3), digits=3)
+wavelength_dep_Yb = 1 ./ [1.389, 1.54, 2.093].^3
 
 # ╔═╡ fd33334d-da6c-420d-b714-681c8ae45373
-gammas = wavelength_dep .* sq_d
+gammas = (wavelength_dep .* sq_d)/sum(wavelength_dep .* sq_d)
 
 # ╔═╡ 08fd52d1-4080-4987-830a-ef083d183d25
 gammas_yb = wavelength_dep_Yb .* sq_d
-
-# ╔═╡ 93d5fda9-db79-48c2-b6e7-e189ead0bd50
-normalize(float(sq_d))
 
 # ╔═╡ 4242208b-bd38-47b4-8490-efa7b1e7409a
 2*0.195 / 0.61 # Gamma3P1/Gamma3P0 for 88Sr from Masson et al
@@ -73,14 +76,15 @@ end
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 WignerSymbols = "9f57e263-0b3d-5e2e-b1be-24f2bb48858b"
 
 [compat]
 Plots = "~1.38.8"
 Symbolics = "~5.1.0"
+Unitful = "~1.12.4"
 WignerSymbols = "~2.0.0"
 """
 
@@ -90,7 +94,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "4c0db7a74fce7a50dd09b3e0fc68b9fd171fa93f"
+project_hash = "a2bdc056763b412f54e000e14e2e7c290ca44279"
 
 [[deps.AbstractAlgebra]]
 deps = ["GroupsCore", "InteractiveUtils", "LinearAlgebra", "MacroTools", "Markdown", "Random", "RandomExtensions", "SparseArrays", "Test"]
@@ -1158,6 +1162,12 @@ git-tree-sha1 = "53915e50200959667e78a92a418594b428dffddf"
 uuid = "1cfade01-22cf-5700-b092-accc4b62d6e1"
 version = "0.4.1"
 
+[[deps.Unitful]]
+deps = ["ConstructionBase", "Dates", "LinearAlgebra", "Random"]
+git-tree-sha1 = "bb37ed24f338bc59b83e3fc9f32dd388e5396c53"
+uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
+version = "1.12.4"
+
 [[deps.Unityper]]
 deps = ["ConstructionBase"]
 git-tree-sha1 = "d5f4ec8c22db63bd3ccb239f640e895cfde145aa"
@@ -1417,11 +1427,12 @@ version = "1.4.1+0"
 # ╠═f7ef4177-afb1-411d-9aee-ce2dfd7643a6
 # ╠═683b1949-0ffa-49bd-85ce-e0829e8b7f85
 # ╠═6638124d-d332-4af8-a489-fb982a51cdf8
+# ╠═34c72b4c-2c60-45b4-8406-ae7ab5ef0935
+# ╠═8b93026e-8cdf-485d-86f0-5ed58ac1fbef
 # ╠═d5290fe8-3124-4644-af05-370191e92646
 # ╠═5679dabc-8648-4a50-95db-cd5faef71ab4
 # ╠═fd33334d-da6c-420d-b714-681c8ae45373
 # ╠═08fd52d1-4080-4987-830a-ef083d183d25
-# ╠═93d5fda9-db79-48c2-b6e7-e189ead0bd50
 # ╠═4242208b-bd38-47b4-8490-efa7b1e7409a
 # ╠═b1456f1c-c119-4992-9e86-15e0dc62f843
 # ╠═36f58fea-36dd-4c15-ad1c-343291cf9af1
