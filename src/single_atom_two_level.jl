@@ -79,6 +79,9 @@ function draw_radiation_pattern(ρ::Operator, nang::Int=20,; kwargs...)
     plt = surface(
         data_x, data_y, data_z,
         color = palette(:tab10)[1],
+        # z_fill=intensity_r,
+        lc=:black,
+        lw=1,
         xlabel="x", ylabel="y", zlabel="z",
         colorbar=false,
         xlim=(-1.1, 1.1), 
@@ -87,7 +90,7 @@ function draw_radiation_pattern(ρ::Operator, nang::Int=20,; kwargs...)
         xticks=[-1, 0, 1],
         yticks=[-1, 0, 1],
         zticks=[-1, 0, 1],
-        aspect_ratio=1,
+        aspect_ratio=:equal,
         dpi=200,
         frame_style=:box,
         ;kwargs...
