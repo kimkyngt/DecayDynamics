@@ -14,14 +14,21 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 6c36526d-f997-4648-a79f-f12f7578e2c3
+# ╔═╡ 8dab1a84-e36d-4675-99d1-bdb3277ab248
 using Plots, Distributions, Roots, PlutoUI, StatsBase, LsqFit
 
 # ╔═╡ de600402-cb64-11ed-3bc4-31f0758652e6
-include("../src/DoubleExp.jl") # custom distribution for double exponential
+begin
+	include("../src/DoubleExp.jl") # custom distribution for double exponential
+	include("../src/count_simulation_tools.jl")
+	default(dpi=200, lw=1.5)
+end
 
 # ╔═╡ 9ad2e9fc-36d9-4c14-b0b6-1dec85950cc9
-md"# Photon counting simulation"
+md"# Photon counting simulation
+TODO
+- sampling `sync_per_count` from a distribution
+"
 
 # ╔═╡ 4e4268b2-05d3-46a9-91d3-edf4f56b3f53
 PlutoUI.TableOfContents()
@@ -32,9 +39,6 @@ TimeHarp 260 [specification](https://www.picoquant.com/products/category/tcspc-a
 
 """
 
-# ╔═╡ 7e6fa384-6720-4a7b-b4fd-97c257e1f15b
-default(dpi=200, lw=1.5)
-
 # ╔═╡ 7c2d6eb7-81d5-4d74-a470-70b7fd24e7cf
 begin
 	# Timing units in μs
@@ -42,7 +46,7 @@ begin
 	tauD = 2.1
 	dead_time = 2.5e-3
 	binsize = dead_time
-	sample_bins = collect(range(0, binsize*2^15, 2^15+1))
+	sample_bins = collect((0:(2^15))*binsize)
 	md"## Parameters"
 end
 
@@ -51,9 +55,9 @@ md"## Distrubution test"
 
 # ╔═╡ b89e5e5d-ffab-4216-a8b6-469edf96d2ac
 begin
-	fig = stephist([rand(DoubleExp(tauP, tauD)) for _ in 1:100_000], label="sample", normalize=:pdf, )
+	fig = stephist([rand(DoubleExp(tauP, tauD)) for _ in 1:10_000], label="sample", normalize=:pdf, )
 	t = range(0, 100, length=1000)
-	plot!(fig, t, pdf.(DoubleExp(tauP, tauD), t), label="probability density function", xlim=(-1, 100), xlab="Time (μs)", ylab="Probability")
+	plot!(fig, t, pdf.(DoubleExp(tauP, tauD), t), label="probability density function", xlim=(-1, 100), xlab="Time (μs)", ylab="Probability", size=(400, 300))
 	fig 
 end
 
@@ -77,21 +81,30 @@ md"""
 ## Effect on the parameter fitting
 """
 
-# ╔═╡ 65345904-9c13-4b6d-b811-54c6e87256de
-function bin_data(data, fitbin)
-	[sum([data[jj+ii] for ii in 1:fitbin]) for jj in fitbin*(0:Int(floor(length(data)/fitbin)-1))]
-end
-
-# ╔═╡ e2995f3f-5a12-46a9-8914-bced42a03767
+# ╔═╡ d3762a0c-2401-4c1a-b66c-16d13d6f1d6e
 md"""
 ### Control parameters
-Photon per sync: $(@bind photon_per_sync NumberField(0:10:100000, default=10000))
 
-Number of sync: $(@bind Nsample NumberField(0:100:Int(5e6/photon_per_sync), default=100))
+Photon per sync: $(@bind _photon_per_sync NumberField(0:10:100000, default=10000))
 
-Binning factor for visibility: $(@bind fitbin NumberField(1:1:1000, default=30))
+Number of sync: $(@bind _Nsample NumberField(0:100:Int(5e6/_photon_per_sync), 
+default=100))
 
+Hold simulation: $(@bind run_sim CheckBox(default=true))
+
+Binning factor for visibility: $(@bind binsz Slider(2 .^ (1:8), default=16, show_value=true))
 """
+
+# ╔═╡ 315246bf-23a6-42a7-9e3d-4bfc968fda01
+if run_sim
+	photon_per_sync = 100
+	Nsample = 1000
+	print("Default prameter")
+else
+	photon_per_sync = _photon_per_sync
+	Nsample = _Nsample
+	print("Parameter updated")
+end
 
 # ╔═╡ b1a108ab-be9b-417c-aebd-13ff27c47d85
 begin
@@ -112,27 +125,31 @@ cps_data = [pps_to_cps(sampled_data[ii]) for ii in eachindex(sampled_data)]
 # ╔═╡ 743dd8c1-49e2-4901-a54c-c900eca55a24
 begin
 	fig1 = plot(sampled_data[1].edges[1][1:end-1], sampled_data[1].weights, lt=:stair, label="Photon per sync, single shot")
-	plot!(fig1, cps_data[1].edges[1][1:end-1], cps_data[1].weights, lt=:stair, label="Count per sync, single shot")
+	plot!(fig1, cps_data[1].edges[1][1:end-1], cps_data[1].weights, lt=:stair, label="Count per sync, single shot", color=3)
 	
 	fig2 = plot(sample_bins[1:end-1], get_summed_counts(sampled_data), label="pps, total")
-	plot!(fig2, sample_bins[1:end-1], get_summed_counts(cps_data), label="cps, total")
-	fig3 = plot(sample_bins[1:end-1], get_summed_counts(sampled_data) - get_summed_counts(cps_data), label="pps - cps")
-	plot(fig1, fig2, fig3, layout=(3, 1), size=(600, 600), plot_title="Applying pmt deadtime", xlab="Time (μs)", ylab="Counts")
+	plot!(fig2, sample_bins[1:end-1], get_summed_counts(cps_data), label="cps, total", color=3)
+	fig3 = plot(sample_bins[1:end-1], get_summed_counts(sampled_data) - get_summed_counts(cps_data), label="pps - cps", color=:black)
+	
+	plot(fig1, fig2, fig3, layout=(3, 1), size=(600, 400), plot_title="Applying pmt deadtime", xlab="Time (μs)", ylab="Counts", )
+end
+
+# ╔═╡ 65345904-9c13-4b6d-b811-54c6e87256de
+function bin_data(data, fitbin)
+	[sum([data[jj+ii] for ii in 1:fitbin]) for jj in fitbin*(0:Int(floor(length(data)/fitbin)-1))]
 end
 
 # ╔═╡ 4663d229-c5a5-4563-87a9-40ac2392a12b
 begin
-	
 	x_data = sample_bins[1:end-1]
 	y_raw = get_summed_counts(sampled_data)
 	y_det = get_summed_counts(cps_data)
 
 	# binning before fitting
-	fit_bin = range(0, binsize*2^15+1, step=binsize*fitbin) 
-	y_raw = bin_data(y_raw, fitbin)
-	y_det = bin_data(y_det, fitbin)
-	x_data = [x_data[fitbin*ii-1] for ii in 1:Int(floor(length(x_data)/fitbin))]
-
+	x_raw, y_raw = bin_xy(x_data, y_raw, binsz)	
+	x_det, y_det = bin_xy(x_data, y_det, binsz)	
+	x_data = x_raw
+	
 	# excluding zero for fit
 	indx_raw_nz = y_raw .>0
 	indx_det_nz = y_det .>0
@@ -143,26 +160,23 @@ begin
 	fit_raw = curve_fit(model, x_data[indx_raw_nz], y_raw[indx_raw_nz], 1 ./(y_raw[indx_raw_nz]), p0)
 	fit_det = curve_fit(model, x_data[indx_det_nz], y_det[indx_det_nz], 1 ./(y_det[indx_det_nz]), p0)
 
-	fig_fit = plot(x_data, y_raw, label="raw, data", ylab="counts")
+	fig_fit = plot(x_data, y_raw, label="raw, data, $(photon_per_sync) pps × $(Nsample) sync", ylab="counts")
 	plot!(fig_fit, x_data, model(x_data, fit_raw.param), label="raw, fit")
 	plot!(fig_fit, x_data, y_det, label="det, data")
 	plot!(fig_fit, x_data, model(x_data, fit_det.param), label="det, fit")
 	
 	
-	fig_res_raw = plot(x_data, y_raw - model(x_data, fit_raw.param), label="raw, (τP, τD) = ($(round(fit_raw.param[2], digits=3))($(round(standard_errors(fit_raw)[2], digits=4))), $(round(fit_raw.param[3], digits=2))($(round(standard_errors(fit_raw)[3], digits=4))))")
+	fig_res_raw = plot(x_data, y_raw - model(x_data, fit_raw.param), label="raw, (τP, τD) = ($(round(fit_raw.param[2], digits=3))($(round(standard_errors(fit_raw)[2], digits=4))), $(round(fit_raw.param[3], digits=2))($(round(standard_errors(fit_raw)[3], digits=4))))", color=1)
 	plot!(x_data, sqrt.(model(x_data, fit_raw.param)), lc = :red, ls=:dash, label="Possionian, reduced-χ² = $(sum(fit_raw.resid.^2)/length(x_data))")
 	plot!(x_data, -sqrt.(model(x_data, fit_raw.param)), lc = :red, ls=:dash, label="", ylab="residual")
 	
-	fig_res_det = plot(x_data, y_det - model(x_data, fit_det.param), label="det, (τP, τD) = ($(round(fit_det.param[2], digits=3))($(round(standard_errors(fit_det)[2], digits=4))), $(round(fit_det.param[3], digits=2))($(round(standard_errors(fit_det)[3], digits=4))))")
+	fig_res_det = plot(x_data, y_det - model(x_data, fit_det.param), label="det, (τP, τD) = ($(round(fit_det.param[2], digits=3))($(round(standard_errors(fit_det)[2], digits=4))), $(round(fit_det.param[3], digits=2))($(round(standard_errors(fit_det)[3], digits=4))))", color=3)
 	plot!(x_data, sqrt.(model(x_data, fit_det.param)), lc = :red, ls=:dash, label="Possionian, reduced-χ² = $(sum(fit_det.resid.^2)/length(x_data))")
 	plot!(x_data, -sqrt.(model(x_data, fit_det.param)), lc = :red, ls=:dash, label="", ylab="residual")
 
 	plot(fig_fit, fig_res_raw, fig_res_det, layout=(3, 1), size=(600, 600), plot_title="Parameter fit. True: τP = $(tauP), τD = $(tauD)")
 
 end
-
-# ╔═╡ 2c6e11c2-e2a0-4042-b8b2-1896925008ae
-standard_errors(fit_det)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -806,9 +820,9 @@ uuid = "91d4177d-7536-5919-b921-800302f37372"
 version = "1.3.2+0"
 
 [[deps.OrderedCollections]]
-git-tree-sha1 = "85f8e6578bf1f9ee0d11e7bb1b1456435479d47c"
+git-tree-sha1 = "d78db6df34313deaca15c5c0b9ff562c704fe1ab"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-version = "1.4.1"
+version = "1.5.0"
 
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1325,12 +1339,11 @@ version = "1.4.1+0"
 # ╠═9ad2e9fc-36d9-4c14-b0b6-1dec85950cc9
 # ╟─4e4268b2-05d3-46a9-91d3-edf4f56b3f53
 # ╟─16a501b3-c881-4ba1-bcb0-ec1da904b230
-# ╠═6c36526d-f997-4648-a79f-f12f7578e2c3
-# ╠═7e6fa384-6720-4a7b-b4fd-97c257e1f15b
+# ╠═8dab1a84-e36d-4675-99d1-bdb3277ab248
 # ╠═de600402-cb64-11ed-3bc4-31f0758652e6
 # ╠═7c2d6eb7-81d5-4d74-a470-70b7fd24e7cf
 # ╟─6d083764-1e51-47b6-bb74-14a5deeeeeda
-# ╟─b89e5e5d-ffab-4216-a8b6-469edf96d2ac
+# ╠═b89e5e5d-ffab-4216-a8b6-469edf96d2ac
 # ╟─b6f17ce9-ffff-46f9-bad7-4e7edb16b3da
 # ╟─b00a0c9d-bf69-4dd3-8eb8-f339b2e9120a
 # ╟─b1a108ab-be9b-417c-aebd-13ff27c47d85
@@ -1338,9 +1351,9 @@ version = "1.4.1+0"
 # ╟─507b2f48-6dfd-4fbe-9edb-f78ce4de577c
 # ╟─743dd8c1-49e2-4901-a54c-c900eca55a24
 # ╟─59ad64a2-731d-4efa-bcd9-59aeda4cef37
+# ╟─d3762a0c-2401-4c1a-b66c-16d13d6f1d6e
+# ╟─315246bf-23a6-42a7-9e3d-4bfc968fda01
 # ╟─65345904-9c13-4b6d-b811-54c6e87256de
-# ╟─e2995f3f-5a12-46a9-8914-bced42a03767
 # ╟─4663d229-c5a5-4563-87a9-40ac2392a12b
-# ╠═2c6e11c2-e2a0-4042-b8b2-1896925008ae
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
