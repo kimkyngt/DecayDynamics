@@ -148,7 +148,12 @@ Summary plot:
 
 ## Many particle, multilevel
 
-TBA?
+### Two particles with hyperfine states
+
+$$\begin{gathered}
+\rho = \rho_1 \otimes \rho_2 \\
+\end{gathered}$$
+
 <!-- 
 - Notation following [2].
 
