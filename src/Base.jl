@@ -5,6 +5,9 @@ using QuantumOptics, WignerSymbols, LinearAlgebra
 Get |F, m>
 """
 function Fm_state(F, m)
+    if abs(m) > F
+        throw(ArgumentError("m must be in the range [-F, F]"))
+    end
     b = SpinBasis(F)
     return normalize(sigmam(b)^Int(F - m) *spinup(b))
 end
@@ -36,6 +39,9 @@ end
 Atomic lowering operator with hyperfine structure. Spherical basis.
 """
 function Σ_q(q::Int, F_1, F_2)
+    if abs(q) > 1
+        throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
+    end
     return sparse(dagger(sum(clebschgordan(F_2, m, 1, q, F_1)*σ(F_1, m + q, F_2, m) for m = -F_2:1:F_2 if abs(m + q) <= F_1 )))
 end
 
