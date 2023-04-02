@@ -7,11 +7,11 @@ F_e = 1//1
 F_g = 0//1
 Fe = string(F_e.num)*"half"
 Fg = string(F_g.num)*"half"
-ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e) + 1*Fm_state(F_e, F_e-1)) ⊕ Ket(SpinBasis(F_g))))
+ρ_0 = sparse(projector(normalize( Fm_state(F_e, F_e)*1 + 1*Fm_state(F_e, F_e-1)) ⊕ Ket(SpinBasis(F_g))))
 # ρ_0 = sparse(normalize(one(SpinBasis(F_e))) ⊕ projector(Ket(SpinBasis(F_g))))
 # ρ_0 = sparse(normalize(projector(Fm_state(F_e, F_e)⊕ Ket(SpinBasis(F_g))) + projector(Fm_state(F_e, F_e-1)⊕ Ket(SpinBasis(F_g)))))
 Astring="1_3_superposition2_gratio3"
-tspan = 0:0.2:5
+tspan = 0:0.02:3
 # Bfield in units of Γ/2π
 field_x = 0.0
 field_y = 0.0

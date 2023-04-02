@@ -68,21 +68,13 @@ end
 
 """
     GreenTensor(r::Vector, k::Number=2π)
-Calculate the Green's Tensor at position r for wave number k defined by
-```math
-G = e^{ikr}\\Big[\\left(\\frac{1}{kr} + \\frac{i}{(kr)^2} - \\frac{1}{(kr)^3}\\right)*I -
-    \\textbf{r}\\textbf{r}^T\\left(\\frac{1}{kr} + \\frac{3i}{(kr)^2} - \\frac{3}{(kr)^3}\\right)\\Big]
-```
-Choosing `k=2π` corresponds to the position `r` being given in units of the
-wavelength associated with the dipole transition.
-Returns a 3×3 complex Matrix.
-
-Modified from CollectiveSpins.jl package
+Modified from CollectiveSpins.jl package. 
+Static limit, imaginary part goes to 2/3
 """
 function GreenTensor(r::Vector{<:Number},k::Real=2π)
     n = norm(r)
     if n == 0
-        return sparse(im*Matrix(I,3,3))
+        return sparse(im*Matrix(I,3,3))*2/3
     else
         rn = r./n
         return exp(im*k*n)*(

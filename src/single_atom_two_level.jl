@@ -30,9 +30,9 @@ Polarization vector of the light.
 """
 function ϵ_q(q::Int)
     if q == 0
-        return [0, 0, 1]
+        return transpose([0, 0, 1])
     elseif abs(q) == 1
-        return -q/sqrt(2) * [1, q*im, 0]
+        return -q/sqrt(2) * transpose([1, q*im, 0])
     else 
         throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
     end
@@ -47,7 +47,7 @@ function E⁺(r::Vector, F_e, F_g)
     else
         G = sparse(GreenTensor(r))
     end
-    Gep(q) = G*conj(ϵ_q(q))
+    Gep(q) = G*adjoint(ϵ_q(q))
     return [sum(Gep(q)[ii] * Σ_q(q, F_e, F_g) for q in [-1, 0, 1]) for ii in 1:3]
 end
 
