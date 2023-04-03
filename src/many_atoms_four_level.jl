@@ -13,11 +13,11 @@ function evolve_master(parameters::Dict; check_rates::Bool=false)
     q_list = [-1, 0, 1]
     ptlindx = range(1, length(positions))
     
-    H = sum(J(i, j, p, q, k)  * (dagger(Σ_iq(i, p, F_i, k, k+1))*Σ_iq(j, q, F_i, k, k+1)) for i in ptlindx for j in ptlindx for p in q_list for q in q_list for k in 1:(length(knorm)-1))
+    H = sum(J(i, j, p, q, k)  * (dagger(Σ_iq(i, p, F_i, kindx=k))*Σ_iq(j, q, F_i, kindx=k)) for i in ptlindx for j in ptlindx for p in q_list for q in q_list for k in 1:(length(knorm)-1))
 
     indx = [(i, p) for i in ptlindx for p in q_list]
-    Jump        = [Σ_iq(i, p, F_i, k, k+1)               for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
-    Jump_dagger = [dagger(Σ_iq(j, q, F_i, k, k+1))       for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
+    Jump        = [Σ_iq(i, p, F_i, kindx=k)               for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
+    Jump_dagger = [dagger(Σ_iq(j, q, F_i, kindx=k))       for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
     rates       = [Γ(i, j, p, q, k)                       for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
  
     if check_rates
