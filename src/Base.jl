@@ -35,16 +35,53 @@ function σ(F_1, m_1, F_2, m_2)
 end
 
 
+# """
+# Atomic lowering operator with hyperfine structure.
+# """
+# function Σ_q(q::Int, F_1::Rational, F_2::Rational)
+#     if abs(q) > 1
+#         throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
+#     end
+#     return sparse(dagger(sum(clebschgordan(F_2, m, 1, q, F_1)*σ(F_1, m + q, F_2, m) for m = -F_2:1:F_2 if abs(m + q) <= F_1 )))
+# end
+
 """
-Atomic lowering operator with hyperfine structure. Spherical basis.
+Σ_q(q::Int, F_i::Array, indx::Int). Atomic lowering operator with hyperfine structure. Method for multiple levels.
+    `q` = -1, 0, 1
+    `F_i`::`Array` = Array of the spin of each level.
+    `indx`::`Int` = index of the level to be lowered.
 """
-function Σ_q(q::Int, F_1, F_2)
+function Σ_q(q::Int, F_i::Array, indx::Int=1)
     if abs(q) > 1
         throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
     end
-    return sparse(dagger(sum(clebschgordan(F_2, m, 1, q, F_1)*σ(F_1, m + q, F_2, m) for m = -F_2:1:F_2 if abs(m + q) <= F_1 )))
+    
+    embed(
+        directsum([SpinBasis(F) for F in F_i]...),
+        directsum([SpinBasis(F) for F in F_i]...),
+        [indx, indx+1],
+        dagger(sum(clebschgordan(F_i[indx+1], m, 1, q, F_i[indx])*σ(F_i[indx], m + q, F_i[indx+1], m) for m = -F_i[indx+1]:1:F_i[indx+1]if abs(m + q) <= F_i[indx] ))
+    )
 end
 
+"""
+Σ_iq(i::Int, q::Int, F_i::Vector{Rational} ; kindx::Int=1).
+Hyperfine lowering operator for multilevel two atoms. 
+- `i`: index of the atom under interest.
+- `q`: -1, 0, 1
+- `F_i`: Array of the spin of each level.
+- `kindx`: index of the `knorm` under interest.
+"""
+function Σ_iq(i::Int, q::Int, F_i::Vector ; kindx::Int=1)
+    if i > 2
+        throw(ArgumentError("Argument i must be one of [1, 2]"))
+    end
+    if abs(q) > 1
+        throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
+    end
+    sigma_single = Σ_q(q, F_i, kindx)
+    embed(sigma_single.basis_l ⊗ sigma_single.basis_l, [i], [sigma_single])
+end
 
 """
 Convert polar coordinate to Cartesian for plotting.

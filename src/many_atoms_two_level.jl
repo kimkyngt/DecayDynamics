@@ -1,18 +1,18 @@
 using Plots, QuantumOptics, LaTeXStrings, WignerSymbols, ProgressMeter, Latexify
 
-"""
-Σ_iq for two atoms.
-"""
-function Σ_iq(i::Int, q::Int, F_1, F_2)
-    comp_basis = SpinBasis(F_i[1]) ⊕ SpinBasis(F_i[2])    
-    if i == 1
-        return Σ_q(q, F_1, F_2) ⊗ identityoperator(comp_basis)    
-    elseif i == 2
-        return identityoperator(comp_basis) ⊗ Σ_q(q, F_1, F_2)
-    else
-        throw(ArgumentError("Argument i must be one of [1, 2]"))
-    end
-end
+# """
+# Σ_iq for two atoms.
+# """
+# function Σ_iq(i::Int, q::Int, F_1, F_2)
+#     comp_basis = SpinBasis(F_i[1]) ⊕ SpinBasis(F_i[2])    
+#     if i == 1
+#         return Σ_q(q, F_1, F_2) ⊗ identityoperator(comp_basis)    
+#     elseif i == 2
+#         return identityoperator(comp_basis) ⊗ Σ_q(q, F_1, F_2)
+#     else
+#         throw(ArgumentError("Argument i must be one of [1, 2]"))
+#     end
+# end
 
 
 """
@@ -27,17 +27,21 @@ function evolve_master(parameters::Dict; check_rates::Bool=false)
     q_list = [-1, 0, 1]
     ptlindx = range(1, length(positions))
     
-    H = sum(J(i, j, p, q)  * (dagger(Σ_iq(i, p, F_i[1], F_i[2]))*Σ_iq(j, q, F_i[1], F_i[2])) for i in ptlindx for j in ptlindx for p in q_list for q in q_list)
+    H = sum(J(i, j, p, q)  * (dagger(Σ_iq(i, p, F_i))*Σ_iq(j, q, F_i)) for i in ptlindx for j in ptlindx for p in q_list for q in q_list)
 
     indx = [(i, p) for i in ptlindx for p in q_list]
-    Jump = [Σ_iq(i, p, F_i[1], F_i[2]) for (i, p) in indx]
-    rates = [Γ(i, j, p, q)  for (i, p) in indx, (j, q) in indx]
+    # Jump = [Σ_iq(i, p, F_i) for (i, p) in indx]
+    # rates = [Γ(i, j, p, q)  for (i, p) in indx, (j, q) in indx]
+    Jump        = [Σ_iq(i, p, F_i)           for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
+    Jump_dagger = [dagger(Σ_iq(j, q, F_i))  for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
+    rates       = [Γ(i, j, p, q)                  for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
     if check_rates
         println("Re[Gamma]:")
         display(real.(rates))
         println("Basis, (particle, polarization):")
         display(indx)
     end
+
     p = Progress(length(tspan), "Solving master equation...")
     function forward_progress(t, rho) 
         # function for checking the progress
@@ -45,7 +49,9 @@ function evolve_master(parameters::Dict; check_rates::Bool=false)
         return copy(rho)
     end
     t_out, ρ_t = timeevolution.master(tspan, ρ_0, H, Jump, 
-        rates=rates, fout=forward_progress
+        rates=rates, 
+        Jdagger=Jump_dagger,
+        fout=forward_progress,
     )
     result = copy(parameters)
     @pack! result = t_out, ρ_t, Jump, rates
