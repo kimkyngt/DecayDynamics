@@ -49,7 +49,7 @@ function plot_dynamics(result::Dict; kwargs...)
     @unpack ρ_t, t_out, F_i, positions, Γ_i, m_exc= result
     
     state_label = ["e", "f", "g"]
-    tΓ = t_out/Γ_i[1]
+    tΓ = t_out*Γ_i[1]
     # Plot population dynamics
 
     fig1 = plot(title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])) → $(latexify(F_i[3])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2))", xlab="tΓ₁", leg=:outerright)

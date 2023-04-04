@@ -4,28 +4,22 @@ using Plots, QuantumOptics, LaTeXStrings, WignerSymbols, ProgressMeter, Latexify
 Solve time dynamics with master equation.
 """
 function evolve_master(parameters::Dict; check_rates::Bool=false)
-    @unpack F_i, g_i, Γ_i, Bfield, positions, ρ_0, tspan, knorm = parameters
+    @unpack F_i, g_i, Γ_kl, Bfield, positions, ρ_0, tspan, knorm = parameters
 
-    # J and Γ mattrix
-    J(i, j, p, q, k) = - 3/4*Γ_i[k]*ϵ_q(p)*real.(GreenTensor(positions[i] - positions[j], knorm[k])) * adjoint(ϵ_q(q))
-    Γ(i, j, p, q, k) =   3/2*Γ_i[k]*ϵ_q(p)*imag.(GreenTensor(positions[i] - positions[j], knorm[k])) * adjoint(ϵ_q(q))
+    # J and Γ matrix
+    J(i, j, p, q, kl::CartesianIndex) = - 3/4*Γ_kl[kl]*ϵ_q(p)*real.(GreenTensor(positions[i] - positions[j], knorm[kl])) * adjoint(ϵ_q(q))
+    Γ(i, j, p, q, kl::CartesianIndex) =   3/2*Γ_kl[kl]*ϵ_q(p)*imag.(GreenTensor(positions[i] - positions[j], knorm[kl])) * adjoint(ϵ_q(q))
 
     q_list = [-1, 0, 1]
     ptlindx = range(1, length(positions))
-    
-    H = sum(J(i, j, p, q, k)  * (dagger(Σ_iq(i, p, F_i, kindx=k))*Σ_iq(j, q, F_i, kindx=k)) for i in ptlindx for j in ptlindx for p in q_list for q in q_list for k in 1:(length(knorm)-1))
+    transition_indx = findall(!iszero, Γ_kl)
 
-    indx = [(i, p) for i in ptlindx for p in q_list]
-    Jump        = [Σ_iq(i, p, F_i, kindx=k)               for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
-    Jump_dagger = [dagger(Σ_iq(j, q, F_i, kindx=k))       for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
-    rates       = [Γ(i, j, p, q, k)                       for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for k in 1:(length(knorm)-1)]
+    H = sparse(sum(J(i, j, p, q, kl)  * (dagger(Σ_iq(i, p, F_i, kl[1], kl[2]))*Σ_iq(j, q, F_i, kl[1], kl[2])) for i in ptlindx for j in ptlindx for p in q_list for q in q_list for kl in transition_indx))
+
+    Jump = [Σ_iq(i, p, F_i, kl[1], kl[2]) for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for kl in transition_indx]
+    Jump_dagger = [sparse(dagger(Σ_iq(j, q, F_i, kl[1], kl[2]))) for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for kl in transition_indx]
+    rates = [Γ(i, j, p, q, kl) for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list for kl in transition_indx]
  
-    if check_rates
-        println("Re[Gamma]:")
-        display(real.(rates))
-        println("Basis, (particle, polarization):")
-        display(indx)
-    end
     p = Progress(length(tspan), "Solving master equation...")
     function forward_progress(t, rho) 
         # function for checking the progress
@@ -38,7 +32,7 @@ function evolve_master(parameters::Dict; check_rates::Bool=false)
         fout=forward_progress,
     )
     result = copy(parameters)
-    @pack! result = t_out, ρ_t, rates
+    @pack! result = t_out, ρ_t
     return result
 end
 
@@ -46,60 +40,70 @@ end
 Plot time evolution data
 """
 function plot_dynamics(result::Dict; kwargs...)
-    @unpack ρ_t, t_out, F_i, positions, Γ_i, m_exc= result
+    @unpack ρ_t, t_out, F_i, positions, Γ_kl, m_exc= result
     
-    state_label = ["e", "f", "g"]
-    tΓ = t_out/Γ_i[1]
+    # state_label = ["³D₁", "³P₀", "³P₁" "¹S₀"]
+    state_label = ["e", "f1", "f0", "g"]
+    tΓ = t_out*Γ_kl[1, 2]
     # Plot population dynamics
 
-    fig1 = plot(title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])) → $(latexify(F_i[3])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2))", xlab="tΓ₁", leg=:outerright)
+    fig1 = plot(title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])), $(latexify(F_i[3])) → $(latexify(F_i[4])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2))", xlab="tΓ₁", leg=:outerright)
     for ii in eachindex(state_label)
         plot!(
             fig1, 
             tΓ,
-            [real.(expect( ⊕( (circshift([1, 0, 0], ii-1) .* [identityoperator(SpinBasis(F)) for F in F_i])...), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)],
+            [real.(expect( ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [identityoperator(SpinBasis(F)) for F in F_i])...), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)],
             label="ptl1, $(state_label[ii])",
         )
-        plot!(
-            fig1, 
-            tΓ,
-            [real.(expect( ⊕( (circshift([1, 0, 0], ii-1) .* [identityoperator(SpinBasis(F)) for F in F_i])...), ptrace(ρ_t[jj], 1)) ) for jj in eachindex(ρ_t)],
-            label="ptl2, $(state_label[ii])",
-        )
+        # plot!(
+        #     fig1, 
+        #     tΓ,
+        #     [real.(expect( ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [identityoperator(SpinBasis(F)) for F in F_i])...), ptrace(ρ_t[jj], 1)) ) for jj in eachindex(ρ_t)],
+        #     label="ptl2, $(state_label[ii])",
+        # )
     end
     plot!(fig1, tΓ, real.(tr.(ρ_t)), label="Tr(ρ)", ls=:dash, lc=:black)
-    plot!(fig1, tΓ, Γ_i[1]/(Γ_i[1] - Γ_i[2])*(exp.(-Γ_i[2]*t_out) .- exp.(-Γ_i[1]*t_out)), lab="Analytic", color=:black, ls=:dash, lw=1)
-    plot!(fig1, tΓ, exp.(-Γ_i[1]*t_out), lab=L"\propto e^{-\Gamma_{D} t}", color=:blue, ls=:dash, lw=1)
-    plot!(fig1, tΓ, exp.(-2Γ_i[1]*t_out), lab=L"\propto e^{-2\Gamma_{D} t}", color=:red, ls=:dash, lw=1)
+    τtot = 1/(Γ_kl[1, 3] + Γ_kl[1, 2])
+    τ1 = 1/Γ_kl[2, 4]
+    τ2 = 1/Γ_kl[1, 2]
+
+    plot!(fig1, tΓ, τtot*τ1/((τ1-τtot)*τ2)*(exp.(-t_out/τ1) .- exp.(-t_out/τtot)), lab="Analytic", color=:black, ls=:dash, lw=1)
+    plot!(fig1, tΓ, exp.(-t_out/τtot), lab=L"\propto e^{-\Gamma_{e\rightarrow f} t}", color=:blue, ls=:dash, lw=1)
+    plot!(fig1, tΓ, exp.(-2t_out/τtot), lab=L"\propto e^{-2\Gamma_{e\rightarrow f} t}", color=:red, ls=:dash, lw=1)
 
     # two particle populations
     fig2 = plot(xlab="tΓ₁", leg=:outerright)
     for ii in eachindex(state_label)
+        # # Diagonal 
+        # plot!(
+        #     fig2, 
+        #     tΓ,
+        #     [real.(expect( projector( normalize(
+        #         ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
+        #         )), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
+        #     label="$(state_label[ii])$(state_label[ii])",
+        # )
+        
+        # Symmetric coherence
         plot!(
             fig2, 
             tΓ,
             [real.(expect( projector( normalize(
-                ⊕( (circshift([1, 0, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([1, 0, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
+                ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 2 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) + 
+                ⊕( (circshift([ii == 2 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
                 )), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
-            label="$(state_label[ii])$(state_label[ii])",
+            label="$(state_label[ii])$(state_label[mod1(ii+1, length(F_i))]) + $(state_label[mod1(ii+1, length(F_i))])$(state_label[ii])",
         )
+
+        # Antisymmetric coherence
         plot!(
             fig2, 
             tΓ,
             [real.(expect( projector( normalize(
-                ⊕( (circshift([1, 0, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([0, 1, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) + 
-                ⊕( (circshift([0, 1, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([1, 0, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
+                ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) - 
+                ⊕( (circshift([ii == 2 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
                 )), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
-            label="$(state_label[ii])$(state_label[mod1(ii+1, 3)]) + $(state_label[mod1(ii+1, 3)])$(state_label[ii])",
-        )
-        plot!(
-            fig2, 
-            tΓ,
-            [real.(expect( projector( normalize(
-                ⊕( (circshift([1, 0, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([0, 1, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) - 
-                ⊕( (circshift([0, 1, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([1, 0, 0], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
-                )), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
-            label="$(state_label[ii])$(state_label[mod1(ii+1, 3)]) - $(state_label[mod1(ii+1, 3)])$(state_label[ii])",
+            label="$(state_label[ii])$(state_label[mod1(ii+1, length(F_i))]) - $(state_label[mod1(ii+1, length(F_i))])$(state_label[ii])",
             ls=:dash
         )
     end
