@@ -52,7 +52,7 @@ function plot_dynamics(result::Dict; kwargs...)
         plot!(
             fig1, 
             tΓ,
-            [real.(expect( ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [identityoperator(SpinBasis(F)) for F in F_i])...), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)],
+            [real.(expect(projector(⊕([kk == ii ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...)), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)],
             label="ptl1, $(state_label[ii])",
         )
         # plot!(
@@ -67,9 +67,9 @@ function plot_dynamics(result::Dict; kwargs...)
     τ1 = 1/Γ_kl[2, 4]
     τ2 = 1/Γ_kl[1, 2]
 
-    plot!(fig1, tΓ, τtot*τ1/((τ1-τtot)*τ2)*(exp.(-t_out/τ1) .- exp.(-t_out/τtot)), lab="Analytic", color=:black, ls=:dash, lw=1)
-    plot!(fig1, tΓ, exp.(-t_out/τtot), lab=L"\propto e^{-\Gamma_{e\rightarrow f} t}", color=:blue, ls=:dash, lw=1)
-    plot!(fig1, tΓ, exp.(-2t_out/τtot), lab=L"\propto e^{-2\Gamma_{e\rightarrow f} t}", color=:red, ls=:dash, lw=1)
+    plot!(fig1, tΓ, τtot*τ1/((τ1-τtot)*τ2)*(exp.(-t_out/τ1) .- exp.(-t_out/τtot)), lab="Analytic", color=:black, ls=:dash)
+    plot!(fig1, tΓ, exp.(-t_out/τtot), lab=L"\propto e^{-\Gamma_{e\rightarrow f} t}", color=:blue, ls=:dash)
+    plot!(fig1, tΓ, exp.(-2t_out/τtot), lab=L"\propto e^{-2\Gamma_{e\rightarrow f} t}", color=:red, ls=:dash)
 
     # two particle populations
     fig2 = plot(xlab="tΓ₁", leg=:outerright)
@@ -89,9 +89,8 @@ function plot_dynamics(result::Dict; kwargs...)
             fig2, 
             tΓ,
             [real.(expect( projector( normalize(
-                ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 2 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) + 
-                ⊕( (circshift([ii == 2 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
-                )), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
+                ⊕([kk == ii ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...) ⊗ ⊕( [kk == mod1(ii+1, length(F_i)) ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...) + 
+                ⊕( [kk == mod1(ii+1, length(F_i)) ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...) ⊗ ⊕( ([kk == ii ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...)))), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
             label="$(state_label[ii])$(state_label[mod1(ii+1, length(F_i))]) + $(state_label[mod1(ii+1, length(F_i))])$(state_label[ii])",
         )
 
@@ -100,14 +99,20 @@ function plot_dynamics(result::Dict; kwargs...)
             fig2, 
             tΓ,
             [real.(expect( projector( normalize(
-                ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) - 
-                ⊕( (circshift([ii == 2 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...) ⊗ ⊕( (circshift([ii == 1 ? 1 : 0 for ii in eachindex(F_i)], ii-1) .* [spinup(SpinBasis(F)) for F in F_i])...)
-                )), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
+                ⊕([kk == ii ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...) ⊗ ⊕( [kk == mod1(ii+1, length(F_i)) ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...) - 
+                ⊕( [kk == mod1(ii+1, length(F_i)) ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...) ⊗ ⊕( ([kk == ii ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...)))), ρ_t[jj]) ) for jj in eachindex(ρ_t)],
             label="$(state_label[ii])$(state_label[mod1(ii+1, length(F_i))]) - $(state_label[mod1(ii+1, length(F_i))])$(state_label[ii])",
             ls=:dash
         )
     end
+    # Comparison to analytic and fitting
+    xdata = t_out
+    ydata = [real.(expect( projector(⊕([kk == 2 ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...)), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)]
 
-    fig = plot(fig1, fig2, layout=(2, 1), size=(800, 600))
+    fig3 = plot(xlab="tΓ₁", leg=:outerright)
+
+
+
+    fig = plot(fig1, fig2, layout=(2, 1), size=(800, 800),)
     return fig
 end
