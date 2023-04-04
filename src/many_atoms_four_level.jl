@@ -1,10 +1,10 @@
-using Plots, QuantumOptics, LaTeXStrings, WignerSymbols, ProgressMeter, Latexify
+using Plots, QuantumOptics, LaTeXStrings, WignerSymbols, ProgressMeter, Latexify, LsqFit
 
 """
 Solve time dynamics with master equation.
 """
 function evolve_master(parameters::Dict; check_rates::Bool=false)
-    @unpack F_i, g_i, Γ_kl, Bfield, positions, ρ_0, tspan, knorm = parameters
+    @unpack F_i, g_i, Γ_kl, Bfield, positions, ρ_0, tspan, knorm,  = parameters
 
     # J and Γ matrix
     J(i, j, p, q, kl::CartesianIndex) = - 3/4*Γ_kl[kl]*ϵ_q(p)*real.(GreenTensor(positions[i] - positions[j], knorm[kl])) * adjoint(ϵ_q(q))
@@ -40,14 +40,14 @@ end
 Plot time evolution data
 """
 function plot_dynamics(result::Dict; kwargs...)
-    @unpack ρ_t, t_out, F_i, positions, Γ_kl, m_exc= result
+    @unpack ρ_t, t_out, F_i, positions, Γ_kl, m_exc, exc_frac = result
     
     # state_label = ["³D₁", "³P₀", "³P₁" "¹S₀"]
     state_label = ["e", "f1", "f0", "g"]
     tΓ = t_out*Γ_kl[1, 2]
     # Plot population dynamics
 
-    fig1 = plot(title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])), $(latexify(F_i[3])) → $(latexify(F_i[4])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2))", xlab="tΓ₁", leg=:outerright)
+    fig1 = plot(xlab="tΓ₁", leg=:right)
     for ii in eachindex(state_label)
         plot!(
             fig1, 
@@ -66,13 +66,13 @@ function plot_dynamics(result::Dict; kwargs...)
     τtot = 1/(Γ_kl[1, 3] + Γ_kl[1, 2])
     τ1 = 1/Γ_kl[2, 4]
     τ2 = 1/Γ_kl[1, 2]
-
-    plot!(fig1, tΓ, τtot*τ1/((τ1-τtot)*τ2)*(exp.(-t_out/τ1) .- exp.(-t_out/τtot)), lab="Analytic", color=:black, ls=:dash)
+    analytic_model = τtot*τ1/((τ1-τtot)*τ2)*(exp.(-t_out/τ1) .- exp.(-t_out/τtot))
+    plot!(fig1, tΓ, analytic_model, lab="Analytic", color=:black, ls=:dash)
     plot!(fig1, tΓ, exp.(-t_out/τtot), lab=L"\propto e^{-\Gamma_{e\rightarrow f} t}", color=:blue, ls=:dash)
     plot!(fig1, tΓ, exp.(-2t_out/τtot), lab=L"\propto e^{-2\Gamma_{e\rightarrow f} t}", color=:red, ls=:dash)
 
     # two particle populations
-    fig2 = plot(xlab="tΓ₁", leg=:outerright)
+    fig2 = plot(xlab="tΓ₁", leg=:right)
     for ii in eachindex(state_label)
         # # Diagonal 
         # plot!(
@@ -107,12 +107,21 @@ function plot_dynamics(result::Dict; kwargs...)
     end
     # Comparison to analytic and fitting
     xdata = t_out
-    ydata = [real.(expect( projector(⊕([kk == 2 ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...)), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)]
+    ydata = [real.(expect(projector(⊕([kk == 2 ? spinup(SpinBasis(F_i[kk])) : Ket(SpinBasis(F_i[kk])) for kk in eachindex(F_i)]...)), ptrace(ρ_t[jj], 2)) ) for jj in eachindex(ρ_t)]
+    # fit data
+    @. model(x, p) = p[1]*(exp(-(x - p[4])/p[2]) - exp(-(x - p[4])/p[3])) + p[5]
+    transition_indx = findall(!iszero, Γ_kl)
+    p0 = [maximum(ydata), 1/Γ_kl[transition_indx[3]], 1/Γ_kl[transition_indx[1]], 0, 0]
+    fit_raw = curve_fit(model, xdata, ydata, p0)
+    fit_model = model(xdata, fit_raw.param)
 
-    fig3 = plot(xlab="tΓ₁", leg=:outerright)
+    fig3 = plot(xlab="tΓ₁",)
+    plot!(fig3, tΓ, ydata, label="data",)
+    plot!(fig3, tΓ, fit_model, label="fit",)
 
+    fig4 = plot(xlab="tΓ₁",)
+    plot!(fig4, tΓ, (ydata - fit_model), lab="data - fit", )
 
-
-    fig = plot(fig1, fig2, layout=(2, 1), size=(800, 800),)
+    fig = plot(fig1, fig3, fig2, fig4, layout=(2, 2), size=(1200, 600), plot_title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])), $(latexify(F_i[3])) → $(latexify(F_i[4])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2)). Exc. frac: $(round(exc_frac[1], digits=3))")
     return fig
 end
