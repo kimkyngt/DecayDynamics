@@ -111,7 +111,7 @@ function plot_dynamics(result::Dict; kwargs...)
     # fit data
     @. model(x, p) = p[1]*(exp(-(x - p[4])/p[2]) - exp(-(x - p[4])/p[3])) + p[5]
     transition_indx = findall(!iszero, Γ_kl)
-    p0 = [maximum(ydata), 1/Γ_kl[transition_indx[3]], 1/Γ_kl[transition_indx[1]], 0, 0]
+    p0 = [maximum(ydata), 1/Γ_kl[transition_indx[3]], τtot, 0, 0] # True taus
     fit_raw = curve_fit(model, xdata, ydata, p0)
     fit_model = model(xdata, fit_raw.param)
 
@@ -120,8 +120,8 @@ function plot_dynamics(result::Dict; kwargs...)
     plot!(fig3, tΓ, fit_model, label="fit",)
 
     fig4 = plot(xlab="tΓ₁",)
-    plot!(fig4, tΓ, (ydata - fit_model), lab="data - fit", )
+    plot!(fig4, tΓ, (ydata - fit_model)/maximum(fit_model), lab="(data - fit)/max[fit], \n (τᴾ/τᴾtrue, τᴰ/τᴰtrue) = ($(round(fit_raw.param[2]/p0[2], digits=4)), $(round(fit_raw.param[3]/p0[3], digits=4)))", )
 
-    fig = plot(fig1, fig3, fig2, fig4, layout=(2, 2), size=(1200, 600), plot_title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])), $(latexify(F_i[3])) → $(latexify(F_i[4])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2)). Exc. frac: $(round(exc_frac[1], digits=3))")
+    fig = plot(fig1, fig3, fig2, fig4, layout=(2, 2), size=(1200, 800), plot_title="Spin: ($(latexify(F_i[1])), $(latexify(m_exc))) → $(latexify(F_i[2])), $(latexify(F_i[3])) → $(latexify(F_i[4])), "*L"\vec{r}_{12} = "*"$(round.(positions[1]-positions[2], digits=2)). Exc. frac: $(round(exc_frac[1], digits=3))")
     return fig
 end

@@ -35,11 +35,15 @@ function evolve_master(parameters::Dict; check_rates::Bool=false)
     Jump        = [Σ_iq(i, p, F_i)           for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
     Jump_dagger = [dagger(Σ_iq(j, q, F_i))  for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
     rates       = [Γ(i, j, p, q)                  for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
+    Jmatrix     = [J(i, j, p, q)                  for i in [1, 2] for j in [1, 2] for p in q_list for q in q_list]
+
     if check_rates
-        println("Re[Gamma]:")
-        display(real.(rates))
-        println("Basis, (particle, polarization):")
-        display(indx)
+        # println("Re[Gamma]:")
+        # display(real.(rates))
+        # println("Basis, (particle, polarization):")
+        # display(indx)
+        println("Re[Omega]:")
+        display(real.(Jmatrix))
     end
 
     p = Progress(length(tspan), "Solving master equation...")
@@ -87,15 +91,19 @@ function plot_dynamics(result::Dict; kwargs...)
         (Ket(SpinBasis(F_i[1])) ⊕ Fm_state(F_i[2], 0)) ⊗ (Fm_state(F_i[1], m_exc) ⊕ Ket(SpinBasis(F_i[2]))) )), ρ_t[ii] ) ) for ii in eachindex(ρ_t)]
     rhoas =  [real.(expect( projector(normalize( (Fm_state(F_i[1], m_exc) ⊕ Ket(SpinBasis(F_i[2]))) ⊗ (Ket(SpinBasis(F_i[1])) ⊕ Fm_state(F_i[2], 0)) - 
         (Ket(SpinBasis(F_i[1])) ⊕ Fm_state(F_i[2], 0)) ⊗ (Fm_state(F_i[1], m_exc) ⊕ Ket(SpinBasis(F_i[2]))) )), ρ_t[ii] ) ) for ii in eachindex(ρ_t)]
+    C = 2*[abs.(expect(
+        σ(F_i[1], m_exc, F_i[2], 0) ⊗ dagger(σ(F_i[1], m_exc, F_i[2], 0))
+        , ρ_t[ii] ) ) for ii in eachindex(ρ_t)] # Concurrence
     fig2 = plot(xlab="tΓ", leg=:outerright)
     plot!(fig2, t_out*Γ_i[1], rhoee, label="ee",)
     plot!(fig2, t_out*Γ_i[1], rhogg, label="gg",)
     plot!(fig2, t_out*Γ_i[1], rhoss, label="eg+ge",)
     plot!(fig2, t_out*Γ_i[1], rhoas, label="eg-ge",)
+    plot!(fig2, t_out*Γ_i[1], C    , label="Concurrence")
     plot!(tspan*Γ_i[1], rhoee[1]*exp.(-Γ_i[1]*tspan), lab=L"\propto e^{-\Gamma t}", color=:black, ls=:dash, lw=1)
     plot!(tspan*Γ_i[1], rhoee[1]*exp.(-(2)*Γ_i[1]*tspan), lab=L"\propto e^{-2\Gamma t}", color=:blue, ls=:dash, lw=1)
     plot!(tspan*Γ_i[1], 1 .- exp.(-Γ_i[1]*tspan), lab=L"\propto 1-e^{-\Gamma t}", color=:black, ls=:dash, lw=1)
-    plot!(tspan*Γ_i[1], 1 .- exp.(-(2)*Γ_i[1]*tspan), lab=L"\propto 1-e^{-2\Gamma t}", color=:red, ls=:dash, lw=1)
+    plot!(tspan*Γ_i[1], 1 .- exp.(-(2)*Γ_i[1]*tspan), lab=L"\propto 1-e^{-2\Gamma t}", color=:red, ls=:dash, lw=1, yticks=0:0.2:1)
 
     # Position of the atoms
     fig3 = plot(xlabel="x", ylabel="y", zlabel="z", title="Atom positions", aspect_ratio=:equal)

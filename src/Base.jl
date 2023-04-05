@@ -65,7 +65,7 @@ Hyperfine lowering operator for multilevel two atoms.
 - `k`: index for the upper state.
 - `l`: index for the lower state.
 """
-function Σ_iq(i::Int, q::Int, F_i::Vector, k::Int, l::Int)
+function Σ_iq(i::Int, q::Int, F_i::Vector, k::Int=1, l::Int=2)
     if i > 2
         throw(ArgumentError("Argument i must be one of [1, 2]"))
     end
