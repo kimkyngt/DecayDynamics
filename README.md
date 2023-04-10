@@ -2,7 +2,7 @@
 
 ## Single particle, multi level
 
-- Notation following [2].
+- Notation following [1, 2].
 
 $$\begin{gathered}
 \mathscr{H}= \sum_{q = -1}^1 \sum_{i = g, e} \mu_B g_i \mathbf{F}^i \cdot \mathbf{B} \\
@@ -113,7 +113,7 @@ We now consider the hyperfine structure. The matrix element has the same form as
 $$
 \begin{aligned}
 \left< F||\mathbf{d}|| F^{\prime}\right> & \equiv\left< J I F||\mathbf{d}|| J^{\prime} I F^{\prime}\right> \\
-& =(-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\lbrace\begin{array}{ccc}
+& = \left< J||\mathbf{d}|| J^{\prime}\right>  (-1)^{F^{\prime}+J+1+I} \sqrt{\left(2 F^{\prime}+1\right)(2 J+1)}\left\lbrace\begin{array}{ccc}
 J & J^{\prime} & 1 \\
 F^{\prime} & F & I
 \end{array}\right\rbrace \\

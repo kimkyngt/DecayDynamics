@@ -8,8 +8,11 @@ function Fm_state(F, m)
     if abs(m) > F
         throw(ArgumentError("m must be in the range [-F, F]"))
     end
-    b = SpinBasis(F)
-    return normalize(sigmam(b)^Int(F - m) *spinup(b))
+    # b = SpinBasis(F)
+    # return normalize(sigmam(b)^Int(F - m) *spinup(b))
+    ψ = Ket(SpinBasis(F))
+    ψ.data[Integer(1 + F - m)] = 1
+    return ψ
 end
 
 """
@@ -26,7 +29,7 @@ function ϵ_q(q::Int)
 end
 
 """ 
-Atomic coherence operator.
+Atomic coherence operator. |F_1, m_1⟩⟨F_2, m_2|.
 """
 function σ(F_1::Number, m_1::Number, F_2::Number, m_2::Number)
     ψe = Fm_state(F_1, m_1)⊕ Ket(SpinBasis(F_2))
@@ -36,28 +39,32 @@ end
 
 
 """
-Σ_q(q::Int, F_i::Array, k::Int=1, l::Int=2)
-Atomic lowering operator with hyperfine structure. Method for multiple levels.
+Σ_q(q::Real, F_i::Vector, k::Int=1, l::Int=2)
+    
+Atomic lowering operator with hyperfine structure. `F_i[k]` → `F_i[l]`.
 - `q`: -1, 0, 1
 - `F_i`: Vector of the spin of each level.
 - `k`: index for the upper state.
 - `l`: index for the lower state.
 """
-function Σ_q(q::Int, F_i::Array, k::Int=1, l::Int=2)
+function Σ_q(q::Real, F_i::Vector, k::Int=1, l::Int=2)
     if abs(q) > 1
         throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
     end
     
-    embed(
+    sparse(embed(
         directsum([SpinBasis(F) for F in F_i]...),
         directsum([SpinBasis(F) for F in F_i]...),
         [k, l],
-        dagger(sum(clebschgordan(F_i[l], m, 1, q, F_i[k])*σ(F_i[k], m + q, F_i[l], m) for m = -F_i[l]:1:F_i[l]if abs(m + q) <= F_i[k] ))
-    )
+        # sparse(sqrt(2*F_i[k]+1)*sum(dagger((-1)^(Int(F_i[l] - m)) * wigner3j(F_i[l], 1, F_i[k], -m, q, m-q) * σ(F_i[k], m - q, F_i[l], m)) for m = -F_i[l]:1:F_i[l] if abs(m - q) <= F_i[k]))
+        # sqrt((2*F_i[k]+1)/(2*F_i[l]+1))*sparse(sum(clebschgordan(F_i[k], m-q, 1, q, F_i[l]) * dagger(σ(F_i[k], m - q, F_i[l], m)) for m = -F_i[l]:1:F_i[l] if abs(m - q) <= F_i[k]))
+        sum((-1)^(2*m - q)*clebschgordan(F_i[l], m, 1, -q, F_i[k]) * dagger(σ(F_i[k], m - q, F_i[l], m)) for m = -F_i[l]:1:F_i[l] if abs(m - q) <= F_i[k])
+    ))
 end
 
 """
-Σ_iq(i::Int, q::Int, F_i::Vector{Rational} ; kindx::Int=1).
+    Σ_iq(i::Int, q::Int, F_i::Vector{Rational} ; kindx::Int=1)
+
 Hyperfine lowering operator for multilevel two atoms. 
 - `i`: index of the atom under interest.
 - `q`: -1, 0, 1
@@ -106,7 +113,7 @@ end
 """
     GreenTensor(r::Vector, k::Number=2π)
 Modified from CollectiveSpins.jl package. 
-Static limit, imaginary part goes to 2/3
+Static limit, imaginary part goes to 2/3. k_0/4π factor goes to Gamma and Omega
 """
 function GreenTensor(r::Vector{<:Number},k::Real=2π)
     n = norm(r)

@@ -25,5 +25,5 @@ parameters = @dict F_i g_i Γ_i Bfield positions ρ_0 tspan m_exc
 @time result = evolve_master(parameters, check_rates=true)
 fig = plot_dynamics(result)
 filename = savename(tostringdict(parameters), connector="-", allowedtypes=[AbstractFloat, Int, String])
-savefig(fig, plotsdir("Concurrence.pdf"))
+# savefig(fig, plotsdir("Concurrence.pdf"))
 fig
