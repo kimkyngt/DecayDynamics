@@ -7,7 +7,7 @@ foldername = "two_atoms_four_level"
 subfoldername = "position_scan"
 
 # Computing collective effects of two atoms with three level hyperfine structure
-F_i = [5//2, 3//2, 3//2, 1//2] # two intermediate states, 3D1, 3P1, 3P0, 1S0
+F_i = [2//1, 1//1, 1//1, 0//1] # two intermediate states, 3D1, 3P1, 3P0, 1S0
 
 Γ_kl = sparse(
         [1, 1, 2],
@@ -25,7 +25,7 @@ frac = 1
 exc_frac = [frac, 1-frac] # Excitation fraction of level 1 and 3
 # Bfield = [0, 0, 0]
 # g_i = [1, 1, 1, 1]
-positions = [[00.02, 0.05, 0.03], [0.0, 0, 0]] # 1 = 2.6 um. 
+positions = [[0, 0, z], [0, 0, 0]] # 1 = 2.6 um. 
 displacement = positions[1]-positions[2] # for saving
 tspan = range(0, 20, length=300)
 m_exc = F_i[1]-1  # excited state

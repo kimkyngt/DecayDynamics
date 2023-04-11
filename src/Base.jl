@@ -127,3 +127,17 @@ function GreenTensor(r::Vector{<:Number},k::Real=2π)
         )
     end
 end
+
+
+"""
+Custom file name generator
+"""
+function rational2str(x)
+    a = string.(round.(float.(x), digits=3))
+    if a isa String
+            return a
+    else
+            return join(a, ",")
+    end
+end
+

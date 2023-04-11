@@ -6,6 +6,10 @@ We would like to check the impact of the hyperfine states on the collective deca
 
 ### Integer spins: 2 > 1 > 0
 
+## Residuals
+
+
+
 ### Half-integer spins: 5/2 > 3/2 > 1/2
 
 ## Experiment sinario
