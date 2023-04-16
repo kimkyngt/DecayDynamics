@@ -1,6 +1,5 @@
 # Effect of the hyperfine state
 
-We would like to check the impact of the hyperfine states on the collective decay.
 
 ## Simple examples
 

@@ -13,6 +13,13 @@ else
     print("df exist, skip loading \n")
 end
 
+"""
+ compute intensity at r = [x, y, z]
+"""
+function get_intensity(r, ρ)
+        
+end
+
 
 function get_idir_plot(xyz::String, m_exc::Int64)
     println("Plotting m=$(m_exc), $(xyz)-direction scan")

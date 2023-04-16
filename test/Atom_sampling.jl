@@ -1,11 +1,11 @@
-using Distributions, Plots
+using Distributions, Plots, LinearAlgebra
 
 μ = [0.0, 0.0, 0.0]
-σ = [1, 1, 100]
+σ = [38, 38, 500]
 Σ = [σ[1]^2 0.0 0.0; 0.0 σ[2]^2 0.0; 0.0 0.0 σ[3]^2]
 dist = MvNormal(μ, Σ)
 distance_dist = MvNormal(μ, 2*Σ)
-Nsample = 10_000
+Nsample = 100_000
 x_pdf = range(-1, 1, length=100)
 
 r = rand(dist, Nsample)
@@ -31,5 +31,14 @@ for ii in [1, 2, 3]
 end
 fig2 = plot(fig2..., plot_title = "Distance sampling", layout=(3, 1), size= (400, 600))
 
-plot(fig1, fig2, layout=(1, 2), size= (800, 600))
+normdist = [norm(d[:, ii]) for ii in range(1, Nsample)]
+fig_dist = plot(normdist, st=:histogram,)
+vline!([225/cbrt(Nsample)])
+println(mean(normdist))
+
+plot(
+    plot(fig1, fig2, layout=(1, 2), size= (800, 600)),
+    fig_dist,
+    size=(1200, 600) 
+    )
 

@@ -47,7 +47,7 @@ Atomic lowering operator with hyperfine structure. `F_i[k]` → `F_i[l]`.
 - `k`: index for the upper state.
 - `l`: index for the lower state.
 """
-function Σ_q(q::Real, F_i::Vector, k::Int=1, l::Int=2)
+function Σ_q(q::Real, F_i::Vector, k::Int, l::Int)
     if abs(q) > 1
         throw(ArgumentError("Argument q must be one of [-1, 0, 1]"))
     end
@@ -111,16 +111,16 @@ end
 
 
 """
-    GreenTensor(r::Vector, k::Number=2π)
+    GreenTensor(r::Vector, k::Real)
 Modified from CollectiveSpins.jl package. 
 Static limit, imaginary part goes to 2/3. k_0/4π factor goes to Gamma and Omega
 """
-function GreenTensor(r::Vector{<:Number},k::Real=2π)
+function GreenTensor(r::Vector, k::Real)
     n = norm(r)
     if n == 0
         return sparse(im*Matrix(I,3,3))*2/3
     else
-        rn = r./n
+        rn = r/n
         return exp(im*k*n)*(
             (1/(k*n) + im/(k*n)^2 - 1/(k*n)^3) .* Matrix(I,3,3) +
             -(1/(k*n) + 3im/(k*n)^2 - 3/(k*n)^3) .* (rn*rn')
@@ -140,4 +140,3 @@ function rational2str(x)
             return join(a, ",")
     end
 end
-
