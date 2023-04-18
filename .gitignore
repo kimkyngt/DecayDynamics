@@ -2,3 +2,6 @@
 *.jld2
 src/20230223-twoatom-cleaned.jl
 plots/two_atoms_four_level/*
+.CondaPkg
+.CondaPkg/*
+docs/decaydynamics.key

@@ -21,9 +21,9 @@ knorm = 2π*sparse(
 
 ########################################################################################
 # Parameters
-distance = 1/2.6
-ground_frac = 0.95
-m_exc = F_i[1] 
+distance = 0*1/2.6
+ground_frac = 0.05
+m_exc = F_i[1] - 1
 foldername = "two_atoms_four_level"
 subfoldername = "m=$(float(m_exc))_fraction_scan_$(ground_frac)1S0_r12=$(distance*2.6)um"
 ########################################################################################
@@ -32,6 +32,7 @@ fracs = range(0, 1, length=11)
 tauDratio_list = []
 tauPratio_list = []
 chisq_list = []
+filecount=1
 for frac in fracs
         global filecount, distance, ground_frac, m_exc
         exc_frac = (1-ground_frac)*[frac, 1-frac] # Excitation fraction of level 1 and 3
@@ -54,6 +55,7 @@ for frac in fracs
                 end
         end
         filename = savename(
+                "[$(filecount)]",
                 parameters,
                 connector="|", 
                 allowedtypes=[Real, Int, Vector{<:Number}, ],
