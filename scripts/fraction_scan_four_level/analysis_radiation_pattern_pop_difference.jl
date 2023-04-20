@@ -4,7 +4,7 @@ import Rotations: RotX, RotZ
 include("../../src/Base.jl")
 include("../../src/many_atoms_four_level.jl")
 
-subfoldername = "m=0.5_fraction_scan_0.951S0_r12=2.6um"
+subfoldername = "x-displacement_m=2.5_fraction_scan_0.951S0_r12=3.0um"
 DATA_DIR = datadir("two_atoms_four_level", subfoldername)
 PLOTS_DIR = plotsdir("two_atoms_four_level", subfoldername)
 
@@ -27,8 +27,9 @@ function get_pop_int_comparison(r_det, fileindx)
                 , ρ_t[jj]) ) for jj in eachindex(ρ_t)
     ]
     ypop = normalize(pop3P1)
-    fig1 = plot(xlab="tΓ", ylab="Area-normalized signal")
-    fig2 = plot(xlab="tΓ", ylab="population - intensity", legend=false)
+    fig1 = plot(xlab="tΓᴰ", ylab="Area normalized signal")
+    fig2 = plot(xlab="tΓᴰ", ylab="Difference", legend=false)
+    fig3 = plot(xlab="tΓᴰ", ylab="Intensity", legend=false)
 
     # compute intensity
 
@@ -45,23 +46,22 @@ function get_pop_int_comparison(r_det, fileindx)
             yint = normalize(Intensity)
             plot!(fig1, tΓ, yint, lab="θ=$(round(θ/π, digits=2))π, ϕ=$(round(ϕ/π, digits=2))π", color=mycolor[colorindx])
             plot!(fig2, tΓ, ypop - yint, lab="θ=$(round(θ/π, digits=2))π, ϕ=$(round(ϕ/π, digits=2))π", color=mycolor[colorindx])
+            plot!(fig3, tΓ, Intensity, lab="θ=$(round(θ/π, digits=2))π, ϕ=$(round(ϕ/π, digits=2))π", color=mycolor[colorindx])
             colorindx += 1
         end
     end
 
     plot!(fig1, tΓ, ypop, lab="population", ls=:dash, color=:black)
-    plot(fig1, fig2, layout=(2, 1), size=(800, 800), plot_title="3D1-3P0-1S0 pop=$(round.([df[fileindx, :exc_frac]; 1-sum(df[fileindx, :exc_frac])], digits=3))")
+    plot(fig1, fig2, fig3, layout=(3, 1), size=(800, 1000), plot_title="³D₁-³P₀-¹S₀ population =$(round.([df[fileindx, :exc_frac]; 1-sum(df[fileindx, :exc_frac])], digits=3))", left_margin=30Plots.px)
 end
 
 
 # Analysis parameters
 r_det = 10 # position of detector
 
-for fileindx in axes(df, 1)
+for fileindx in axes(df, 1)[5]
     fig = get_pop_int_comparison(r_det, fileindx)
     savefig(fig, joinpath(PLOTS_DIR, splitdir(df[fileindx, :path])[2]*"_int-pop.pdf"))
     display(fig)
 end
 
-
-# savefig(fig, joinpath(PLOTS_DIR, splitdir(df[fileindx, :path])[2]*"_radiation_pattern_logInt.pdf"))

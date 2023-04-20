@@ -14,16 +14,26 @@ F_g & 1 & F_e \\
 
 The other parts are essentially the same as [1].
 
-## Green's function
+$$\begin{gathered}
+\mathscr{H}=\hbar \sum_{i, j=1}^N \sum_{q, q^{\prime}=-1}^1 J_{i j q q^{\prime}} \hat{\Sigma}_{i q}^{\dagger} \hat{\Sigma}_{j q^{\prime}}, \\ \mathscr{L}[\rho]=\sum_{i, j=1}^N \sum_{q, q^{\prime}=-1}^1 \frac{\Gamma_{i j q q^{\prime}}}{2}\left(2 \hat{\Sigma}_{j q^{\prime}} \rho \hat{\Sigma}_{i q}^{\dagger}-\hat{\Sigma}_{i q}^{\dagger} \hat{\Sigma}_{j q^{\prime}} \rho -\rho \hat{\Sigma}_{i q}^{\dagger} \hat{\Sigma}_{j q^{\prime}}\right)
+\end{gathered}$$
 
-The imaginary part of the Green's function defined in `src/base.jl` approaces to 2/3 at $\mathbf{r}_{ij} = (0, 0, 0)$. See `test/GreenTensor_test.jl`. To account this normalization, we put 3/2 and 3/4 for calculation J and Γ. See for example, `src/many_atoms_four_level.jl`.
+$$
+\begin{aligned}
+& J_{i j q q^{\prime}}=-\frac{\mu_0 \omega_0^2}{\hbar}|\wp|^2 \hat{\mathbf{e}}_q \cdot \operatorname{Re} \mathbf{G}\left(\mathbf{r}_i, \mathbf{r}_j, \omega_0\right) \cdot \hat{\mathbf{e}}_{q^{\prime}}^* \\
+& \Gamma_{i j q q^{\prime}}=\frac{2 \mu_0 \omega_0^2}{\hbar}|\wp|^2 \hat{\mathbf{e}}_q \cdot \operatorname{Im} \mathbf{G}\left(\mathbf{r}_i, \mathbf{r}_j, \omega_0\right) \cdot \hat{\mathbf{e}}_{q^{\prime}}^*
+\end{aligned}
+$$
+
+## Green's function, $J$ and $\Gamma$
+
+The imaginary part of the Green's function defined in `src/base.jl` approaces to 2/3 at $\mathbf{r}_{ij} = (0, 0, 0)$. See `test/GreenTensor_test.jl`. To account this normalization, we put 3/2 and 3/4 for calculation J and Γ. See for example, `src/many_atoms_four_level.jl`. Here, indices `kl` is for the different transitions.
 
 ```julia
     # J and Γ matrix
 J(i, j, p, q, kl::CartesianIndex) = - 3/4*Γ_kl[kl]*ϵ_q(p)*real.(GreenTensor(positions[i] - positions[j], knorm[kl])) * adjoint(ϵ_q(q))
 Γ(i, j, p, q, kl::CartesianIndex) =   3/2*Γ_kl[kl]*ϵ_q(p)*imag.(GreenTensor(positions[i] - positions[j], knorm[kl])) * adjoint(ϵ_q(q))
 ```
-
 
 
 ## Reference

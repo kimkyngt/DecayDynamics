@@ -4,12 +4,12 @@ import Rotations: RotX, RotZ
 include("../../src/Base.jl")
 include("../../src/many_atoms_four_level.jl")
 
-subfoldername = "m=0.5_fraction_scan_0.951S0_r12=2.6um"
+subfoldername = "x-displacement_m=2.5_fraction_scan_0.951S0_r12=10.0um"
 DATA_DIR = datadir("two_atoms_four_level", subfoldername)
 PLOTS_DIR = plotsdir("two_atoms_four_level", subfoldername)
 df = collect_results(DATA_DIR)    
 
-for fileindx in axes(df)[1]
+for fileindx in axes(df)[1][5]
     println("Processing file $(df[fileindx, :path])")
     figs = []
     # plot radiation pattern at certain time. 
