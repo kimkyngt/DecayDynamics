@@ -22,7 +22,7 @@ knorm = 2π*sparse(
 ########################################################################################
 # Parameters
 distance = 0/2.6
-ground_frac = 0.95
+ground_frac = 0.05
 m_exc = F_i[1] -2
 foldername = "two_atoms_four_level"
 subfoldername = "x-displacement_m=$(float(m_exc))_fraction_scan_$(ground_frac)1S0_r12=$(distance*2.6)um"
