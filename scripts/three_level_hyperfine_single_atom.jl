@@ -4,11 +4,11 @@ include("../src/single_atom_three_level.jl")
 
 # Parameters
 
-F_i = [5//2, 3//2, 1//2]
+F_i = [11//2, 11//2, 9//2]
 g_i = [1, 1, 0.0]
 Γ_i = [10.0, 1.0, 0]
-Bfield = [0, 0, 50]
-tspan = 0:0.002:0.5
+Bfield = [0, 0, 3]
+tspan = 0:0.002:5
 frac = normalize([1, 1])
 
 ρ_0 = sparse(normalize(
@@ -49,5 +49,5 @@ figs_detector2 = plot_detector_signal(result, pi/2, 0)
 fig = vcat(figs_population, figs_detector, plot(axis=false), figs_detector2)
 fig_tot = plot(fig..., size=(1800, 1800), margins=40Plots.px, layout=(4, 3))
 
-savefig(fig_tot, plotsdir("three_level_hyperfine_single_atom", filename*".pdf"))
+# savefig(fig_tot, plotsdir("three_level_hyperfine_single_atom", filename*".pdf"))
 display(fig_tot)

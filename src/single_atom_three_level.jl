@@ -313,3 +313,16 @@ function plot_detector_signal(result::Dict, θ_center::Number, ϕ_center::Number
     plot!(fig_det, x, y, z, st=:scatter, color=1, xlab="y", ylab="x", zlab="z", ticks=false, title="Detector: NA=$NA, θ=$(ang_to_print)ᵒ")
     return [fig_sig, fig_det]
 end
+
+
+"""
+Just for generating filename
+"""
+function strfloat(x)
+    a = string.(round.(float.(x), digits=3))
+    if a isa String
+            return a
+    else
+            return join(a, ",")
+    end
+end

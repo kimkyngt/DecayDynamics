@@ -21,9 +21,9 @@ knorm = 2π*sparse(
         [1, 2.6/2.7, 2.6/0.689], # wavevector ratio
         4, 4
 ) # length of the k-vector, reference to 2.6. index dictate which transition.
-fracs = 0.1
+frac = 1
 exc_frac = [frac, 1-frac] # Excitation fraction of level 1 and 3
-# Bfield = [0, 0, 0]
+Bfield = [0, 0, 1]
 # g_i = [1, 1, 1, 1]
 positions = [[0, 0, 00.00], [0, 0, 0]] # 1 = 2.6 um. 
 displacement = positions[1]-positions[2] # for saving
@@ -32,7 +32,7 @@ m_exc = F_i[1]  # excited state
 
 # ρ_0 = ( ⊕([ii==1 ? Fm_state(F_i[ii], m_exc) : Ket(SpinBasis(F_i[ii])) for ii in eachindex(F_i)]...) ⊗ 
 #         ⊕([ii==1 ? Fm_state(F_i[ii], m_exc) : Ket(SpinBasis(F_i[ii])) for ii in eachindex(F_i)]...) )
-# description="m=$(AbstractFloat(m_exc))_FullyExcitedState_r12=$(round.(positions[1]-positions[2], digits=2))"
+description="m=$(AbstractFloat(m_exc))_FullyExcitedState_r12=$(round.(positions[1]-positions[2], digits=2))"
 
 ψsingle_exc=sqrt(exc_frac[1])*spinup(SpinBasis(F_i[1])) ⊕ Ket(SpinBasis(F_i[2])) ⊕ exp(im*knorm[1, 2]*(norm(positions[1]-positions[2])))*sqrt(exc_frac[2])*spinup(SpinBasis(F_i[3])) ⊕ Ket(SpinBasis(F_i[4]))
 

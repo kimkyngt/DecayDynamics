@@ -1,5 +1,5 @@
 # Base package for the project
-using QuantumOptics, WignerSymbols, LinearAlgebra
+using QuantumOptics, WignerSymbols, LinearAlgebra, SparseArrays
 
 """ 
 Get |F, m⟩
