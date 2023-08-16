@@ -1,5 +1,6 @@
 # Base package for the project
 using QuantumOptics, WignerSymbols, LinearAlgebra, SparseArrays
+import Rotations: RotX, RotZ
 
 """ 
 Get |F, m⟩
@@ -109,13 +110,39 @@ function draw_unit_sphere(Nsample=20, )
     return fig
 end
 
+"""
+Randomly sample unit vectors in NA centered at (theta, phi).
+Returns unit vector components x, y, z
+test: plot(sample_omega_on_sphere(10, 0.5, pi/2, pi), st:scatter)
+"""
+function sample_omega_on_sphere(Nsample::Int, NA::Number, theta::Number, phi::Number)
+    ang = asin(NA)
+    theta_sample = 2*ang*(rand(Nsample) .- 0.5)
+    phi_sample = 2*pi*rand(Nsample)
+    u = []
+    for ii in eachindex(theta_sample)
+        push!(u, RotZ(phi)*RotX(theta)*[
+            sin(theta_sample[ii])*cos(phi_sample[ii]), 
+            sin(theta_sample[ii])*sin(phi_sample[ii]), 
+            cos(theta_sample[ii])
+            ])
+    end
+    x, y, z = [], [], []
+    for ii in eachindex(u)
+        push!(x, u[ii][1]) 
+        push!(y, u[ii][2])
+        push!(z, u[ii][3])
+    end
+    return x, y, z
+end
+
 
 """
     GreenTensor(r::Vector, k::Real)
 Modified from CollectiveSpins.jl package. 
 Static limit, imaginary part goes to 2/3. k_0/4π factor goes to Gamma and Omega
 """
-function GreenTensor(r::Vector, k::Real)
+function GreenTensor(r::Vector, k::Real=1)
     n = norm(r)
     if n == 0
         return sparse(im*Matrix(I,3,3))*2/3
@@ -140,3 +167,6 @@ function rational2str(x)
             return join(a, ",")
     end
 end
+
+
+
