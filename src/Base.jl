@@ -1,5 +1,5 @@
 # Base package for the project
-using QuantumOptics, WignerSymbols, LinearAlgebra, SparseArrays
+using QuantumOptics, WignerSymbols, LinearAlgebra, SparseArrays, Interpolations
 import Rotations: RotX, RotZ
 
 """ 
@@ -96,6 +96,17 @@ function polar_2_xyz(θ, ϕ, r=1)
 end
 
 """
+convert Cartesian coordinate to polar
+"""
+function xyz_2_polar(x, y, z)
+    r = sqrt.(x.^2 + y.^2 + z.^2)
+    θ = acos.(z./r)
+    ϕ = atan.(y, x)
+    return θ, ϕ, r
+end
+
+
+"""
 Draw a unit sphere. Nsample determines the density
 """
 function draw_unit_sphere(Nsample=20, )
@@ -113,7 +124,7 @@ end
 """
 Randomly sample unit vectors in NA centered at (theta, phi).
 Returns unit vector components x, y, z
-test: plot(sample_omega_on_sphere(10, 0.5, pi/2, pi), st:scatter)
+test: plot(sample_omega_on_sphere(10, 0.5, pi/2, pi), st=:scatter)
 """
 function sample_omega_on_sphere(Nsample::Int, NA::Number, theta::Number, phi::Number)
     ang = asin(NA)
@@ -133,6 +144,36 @@ function sample_omega_on_sphere(Nsample::Int, NA::Number, theta::Number, phi::Nu
         push!(y, u[ii][2])
         push!(z, u[ii][3])
     end
+    return x, y, z
+end
+
+"""
+Sample random points on a sphere
+"""
+function sample_sphere(Nsample::Int)
+    x, y, z, = [], [], []
+    for ii in range(1, Nsample)
+        theta = acos(1 .- 2*rand())
+        phi = 2*pi*rand()
+        push!(x, sin(theta)*cos(phi))
+        push!(y, sin(theta)*sin(phi))
+        push!(z, cos(theta))
+    end
+    return x, y, z
+end
+
+"""
+grid points on a sphere uniformly
+"""
+function sample_sphere_uniform(Nsample::Int)
+    num_pts = Nsample
+    indices = collect(range(0, stop=num_pts-1, length=num_pts)) .+ 0.5
+    
+    phi = acos.(1 .- 2 .* indices ./ num_pts)
+    theta = pi .* (1 .+ 5^0.5) .* indices
+    
+    x, y, z = cos.(theta) .* sin.(phi), sin.(theta) .* sin.(phi), cos.(phi)
+    
     return x, y, z
 end
 
