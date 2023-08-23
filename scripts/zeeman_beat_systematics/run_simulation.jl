@@ -80,10 +80,11 @@ function run_simulation(d::Dict)
     results = []
     p = Progress(length(Bfields), "Getting I for Bfields...")
     for Bfield in Bfields
-        push!(results, [Bfield, sim_detector(Bfield, rho0, thetaDet, phiDet)])
+        fit_raw, t_out, It, soln = sim_detector(Bfield, rho0, thetaDet, phiDet)
+        tosave = @strdict soln Bfield fit_raw t_out It
+        push!(results, tosave)
         next!(p)
     end
-
     return results
 end
 
@@ -94,11 +95,14 @@ function plot_results(results)
     tauPs = []
     tauDs = []
     for ii in eachindex(results)
-        theta, phi = xyz_2_polar(results[ii][1][1], results[ii][1][2], results[ii][1][3])
+        Bfield = results[ii]["Bfield"]
+        fit_raw = results[ii]["fit_raw"]
+
+        theta, phi = xyz_2_polar(Bfield[1], Bfield[2], Bfield[3])
         push!(thetas, theta)
         push!(phis, phi)
-        push!(tauPs, results[ii][2].param[2])
-        push!(tauDs, results[ii][2].param[3])
+        push!(tauPs, fit_raw.param[2])
+        push!(tauDs, fit_raw.param[3])
     end
 
     dtauP = (tauPs .- 10)/10
@@ -116,24 +120,50 @@ function plot_results(results)
 end
 
 
-Nsample = 2
-B = 2e-3
-thetaDet = 4*π/180
+Nsample = 100
+B_list = [1e-6, 1e-3, 2e-3, 5e-3]
+thetaDet_list = [0, 4*π/180, π/4, π/2]
 phiDet = 0
 
-rho0 = normalize(directsum(
+rho0_list = [
+    normalize(directsum(
     Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 5//2) ,
     Ket(SpinBasis(F_i[2])),
     Ket(SpinBasis(F_i[3])),
-    Ket(SpinBasis(F_i[4]))
-))
+    Ket(SpinBasis(F_i[4])))),
 
-params = @strdict Nsample rho0 B thetaDet phiDet
+    normalize(directsum(
+    Fm_state(F_i[1], 9//2) - Fm_state(F_i[1], 5//2) ,
+    Ket(SpinBasis(F_i[2])),
+    Ket(SpinBasis(F_i[3])),
+    Ket(SpinBasis(F_i[4])))),
 
-savename(params)
-results = run_simulation(params)
+    normalize(directsum(
+    Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 7//2) ,
+    Ket(SpinBasis(F_i[2])),
+    Ket(SpinBasis(F_i[3])),
+    Ket(SpinBasis(F_i[4])))),
 
-data_to_save = @strdict results params
-wsave(datadir("zeeman_beat", savename(params, "jld2")), data_to_save)
+    normalize(directsum(
+    Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 7//2) ,
+    Ket(SpinBasis(F_i[2])),
+    Ket(SpinBasis(F_i[3])),
+    Ket(SpinBasis(F_i[4])))),
+]
 
-# plot_results(results)
+rho0_indx_list = 1:length(rho0_list)
+
+for rho0_indx in rho0_indx_list
+    rho0 = rho0_list[rho0_indx]
+    for B in B_list
+        for thetaDet in thetaDet_list
+            params = @strdict Nsample rho0 B thetaDet phiDet rho0_indx
+            results = run_simulation(params)
+            # plot_results(results)
+            data_to_save = @strdict results params
+            wsave(datadir("zeeman_beat", savename(params, "jld2")), data_to_save)
+            println(savename(params, "jld2"))
+        end
+    end
+end
+
