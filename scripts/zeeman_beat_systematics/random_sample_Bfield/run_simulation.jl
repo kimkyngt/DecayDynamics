@@ -91,7 +91,6 @@ for ii in 1:N_simulation
     # Sampling Bfield
     x, y, z = sample_sphere(1)
     Bfield = randn()*σB*[x, y, z]
-    push!(bb, Bfield)
     params = @strdict rho0 Bfield thetaDet phiDet σB
     result = run_simulation(params)
     data_to_save = @strdict result params
