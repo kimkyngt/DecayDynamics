@@ -44,7 +44,7 @@ end
 @. model(x, p) = p[1]*(exp(-(x - p[4])/p[2]) - exp(-(x - p[4])/p[3])) + p[5] 
 
 function sim_detector(Bfield, ρ_0, θ, ϕ; out_fig=false)
-    t_out, It, soln = generate_sample(Bfield, ρ_0, θ, ϕ)
+    t_out, It, _ = generate_sample(Bfield, ρ_0, θ, ϕ)
     It = It / maximum(It)
     # plot and fit the data to a double exponential
     p0 = [maximum(It), 10, 1, 0, 0]
@@ -61,7 +61,7 @@ function sim_detector(Bfield, ρ_0, θ, ϕ; out_fig=false)
 
         return figtot
     else
-        return fit_raw, t_out, It, soln
+        return fit_raw, t_out, It
     end
 end
 
@@ -80,45 +80,13 @@ function run_simulation(d::Dict)
     results = []
     p = Progress(length(Bfields), "Getting I for Bfields...")
     for Bfield in Bfields
-        fit_raw, t_out, It, soln = sim_detector(Bfield, rho0, thetaDet, phiDet)
-        tosave = @strdict soln Bfield fit_raw t_out It
+        fit_raw, t_out, It = sim_detector(Bfield, rho0, thetaDet, phiDet)
+        tosave = @strdict Bfield fit_raw t_out It
         push!(results, tosave)
         next!(p)
     end
     return results
 end
-
-function plot_results(results)
-    # Plot the results
-    thetas = []
-    phis = []
-    tauPs = []
-    tauDs = []
-    for ii in eachindex(results)
-        Bfield = results[ii]["Bfield"]
-        fit_raw = results[ii]["fit_raw"]
-
-        theta, phi = xyz_2_polar(Bfield[1], Bfield[2], Bfield[3])
-        push!(thetas, theta)
-        push!(phis, phi)
-        push!(tauPs, fit_raw.param[2])
-        push!(tauDs, fit_raw.param[3])
-    end
-
-    dtauP = (tauPs .- 10)/10
-    dtauPmax = maximum(abs.(dtauP))
-    dtauD = (tauDs .- 1)
-    dtauDmax = maximum(abs.(dtauD))
-
-    fig = plot(
-        scatter(thetas/π, phis/π, marker_z=dtauP, markersize=11, markerstrokewidth=0, lab="τP fractional error", xlab="θ/π", ylab="ϕ/π", legend=false, clim=(-dtauPmax, dtauPmax), colorbar=false, color=:vik, title="P"),
-        scatter(thetas/π, phis/π, marker_z=dtauD, markersize=11, markerstrokewidth=0, lab="τD, fractional error", xlab="θ/π", ylab="ϕ/π", legend=false, clim=(-dtauDmax, dtauDmax), colorbar=false, color=:vik, title="D"),
-        plot(phis/π, dtauP, marker_z=dtauP, st=:scatter, markersize=11, markerstrokewidth=0, ylab="fractional error", xlab="ϕ/π", legend=false, clim=(-dtauPmax, dtauPmax), color=:vik, cb=:none, ylim=[-dtauPmax, dtauPmax]*1.1),
-        plot(phis/π, dtauD, marker_z=dtauD, st=:scatter, markersize=11, markerstrokewidth=0, ylab="fractional error", xlab="ϕ/π", legend=false, clim=(-dtauDmax, dtauDmax), color=:vik, cb=:none, ylim=[-dtauDmax, dtauDmax]*1.1),
-    size=(600, 600))
-    return fig
-end
-
 
 Nsample = 100
 B_list = [1e-6, 1e-3, 2e-3, 5e-3]
@@ -127,28 +95,34 @@ phiDet = 0
 
 rho0_list = [
     normalize(directsum(
-    Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 5//2) ,
-    Ket(SpinBasis(F_i[2])),
-    Ket(SpinBasis(F_i[3])),
-    Ket(SpinBasis(F_i[4])))),
+        Fm_state(F_i[1], 9//2),
+        Ket(SpinBasis(F_i[2])),
+        Ket(SpinBasis(F_i[3])),
+        Ket(SpinBasis(F_i[4])))),
 
-    normalize(directsum(
-    Fm_state(F_i[1], 9//2) - Fm_state(F_i[1], 5//2) ,
-    Ket(SpinBasis(F_i[2])),
-    Ket(SpinBasis(F_i[3])),
-    Ket(SpinBasis(F_i[4])))),
+    # normalize(directsum(
+    # Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 5//2) ,
+    # Ket(SpinBasis(F_i[2])),
+    # Ket(SpinBasis(F_i[3])),
+    # Ket(SpinBasis(F_i[4])))),
 
-    normalize(directsum(
-    Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 7//2) ,
-    Ket(SpinBasis(F_i[2])),
-    Ket(SpinBasis(F_i[3])),
-    Ket(SpinBasis(F_i[4])))),
+    # normalize(directsum(
+    # Fm_state(F_i[1], 9//2) - Fm_state(F_i[1], 5//2) ,
+    # Ket(SpinBasis(F_i[2])),
+    # Ket(SpinBasis(F_i[3])),
+    # Ket(SpinBasis(F_i[4])))),
 
-    normalize(directsum(
-    Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 7//2) ,
-    Ket(SpinBasis(F_i[2])),
-    Ket(SpinBasis(F_i[3])),
-    Ket(SpinBasis(F_i[4])))),
+    # normalize(directsum(
+    # Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 7//2) ,
+    # Ket(SpinBasis(F_i[2])),
+    # Ket(SpinBasis(F_i[3])),
+    # Ket(SpinBasis(F_i[4])))),
+
+    # normalize(directsum(
+    # Fm_state(F_i[1], 9//2) + Fm_state(F_i[1], 7//2) ,
+    # Ket(SpinBasis(F_i[2])),
+    # Ket(SpinBasis(F_i[3])),
+    # Ket(SpinBasis(F_i[4])))),
 ]
 
 rho0_indx_list = 1:length(rho0_list)

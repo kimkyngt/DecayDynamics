@@ -148,7 +148,7 @@ function sample_omega_on_sphere(Nsample::Int, NA::Number, theta::Number, phi::Nu
 end
 
 """
-Sample random points on a sphere
+Sample uniform random points on the unit sphere
 """
 function sample_sphere(Nsample::Int)
     x, y, z, = [], [], []
@@ -159,20 +159,24 @@ function sample_sphere(Nsample::Int)
         push!(y, sin(theta)*sin(phi))
         push!(z, cos(theta))
     end
-    return x, y, z
+    if Nsample == 1
+        return x[1], y[1], z[1]
+    else
+        return x, y, z
+    end
 end
 
 """
-grid points on a sphere uniformly
+Fibonacci lattice for uniform looking points on the sphere for the visual purpose.
 """
 function sample_sphere_uniform(Nsample::Int)
     num_pts = Nsample
     indices = collect(range(0, stop=num_pts-1, length=num_pts)) .+ 0.5
     
-    phi = acos.(1 .- 2 .* indices ./ num_pts)
-    theta = pi .* (1 .+ 5^0.5) .* indices
+    theta = acos.(1 .- 2 .* indices ./ num_pts)
+    phi = pi .* (1 .+ 5^0.5) .* indices
     
-    x, y, z = cos.(theta) .* sin.(phi), sin.(theta) .* sin.(phi), cos.(phi)
+    x, y, z = cos.(phi) .* sin.(theta), sin.(phi) .* sin.(theta), cos.(theta)
     
     return x, y, z
 end
