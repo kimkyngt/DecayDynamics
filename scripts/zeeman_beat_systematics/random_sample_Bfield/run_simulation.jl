@@ -87,7 +87,7 @@ rho0 = normalize(directsum(
 
 σB = 2e-3 # standard deviation of the gaussian
 
-for ii in 1:N_simulation
+@showprogress for ii in 1:N_simulation
     # Sampling Bfield
     x, y, z = sample_sphere(1)
     Bfield = randn()*σB*[x, y, z]
@@ -95,8 +95,8 @@ for ii in 1:N_simulation
     result = run_simulation(params)
     data_to_save = @strdict result params
     save_file_name = savename(params, "jld2")
-    wsave(datadir("zeeman_beat", "gaussian_sampling", save_file_name), data_to_save)
+    safesave(datadir("zeeman_beat", "gaussian_sampling", save_file_name), data_to_save)
     println(save_file_name)
     # show progress
-    println("$(round(100*ii / N_simulation, digits=2))%")
+    # println("$(round(100*ii / N_simulation, digits=2))%")
 end
