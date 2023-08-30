@@ -85,7 +85,7 @@ J^{\prime} & J & S \\
 \end{array} \right\rbrace
 \end{aligned}$$
 
-Here, (un)primed numbers are for the (excited)ground states. For $^{3} {D}_{1} \rarr ^{3} P_{ J^{\prime} }$, where $J^{\prime} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{\prime}}$ states will be
+Here, (un)primed numbers are for the (excited)ground states. For $^{3} {D}_{1} \rightarrow ^{3} P_{ J^{zz} }$, where $J^{zz} \in (0, 1, 2)$ and $J = 1$, $L=2$, $L'=1$, $S=1$ are fixed. The ratio between squared dipole matrix elements of different ${}^3{P}_{J^{zz}}$ states will be
 
 $$
 \left| \left< {}^{3}{D}_{1} || \mathbf{d} || {}^3{P}_{J^{\prime}} \right> \right|^2 \propto (2J^{\prime}+1)(2\cdot 2+1)\left| \left\lbrace\begin{array}{ccc}

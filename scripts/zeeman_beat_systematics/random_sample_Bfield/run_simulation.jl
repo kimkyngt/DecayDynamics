@@ -76,7 +76,7 @@ function run_simulation(d::Dict)
     return tosave
 end
 
-N_simulation = 100
+N_simulation = 3000
 thetaDet = 4*π/180
 phiDet = 0
 rho0 = normalize(directsum(
@@ -85,7 +85,7 @@ rho0 = normalize(directsum(
     Ket(SpinBasis(F_i[3])),
     Ket(SpinBasis(F_i[4]))))
 
-σB = 2e-3 # standard deviation of the gaussian
+σB = 5e-3 # standard deviation of the gaussian
 
 @showprogress for ii in 1:N_simulation
     # Sampling Bfield
@@ -95,8 +95,8 @@ rho0 = normalize(directsum(
     result = run_simulation(params)
     data_to_save = @strdict result params
     save_file_name = savename(params, "jld2")
-    safesave(datadir("zeeman_beat", "gaussian_sampling", save_file_name), data_to_save)
-    println(save_file_name)
+    safesave(datadir("zeeman_beat", "gaussian_sampling1mG", save_file_name), data_to_save)
+    # println(save_file_name)
     # show progress
     # println("$(round(100*ii / N_simulation, digits=2))%")
 end

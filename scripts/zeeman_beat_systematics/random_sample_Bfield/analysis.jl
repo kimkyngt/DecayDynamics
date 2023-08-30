@@ -4,7 +4,7 @@ include(srcdir("single_atom_four_level.jl"))
 
 # load data if `df` not exists
 if !isdefined(Main, :df)
-    df = collect_results(datadir("zeeman_beat", "gaussian_sampling"))
+    df = collect_results(datadir("zeeman_beat", "gaussian_sampling1mG"))
 end
 
 # Make sure if B field noise look like what we expect.
@@ -22,7 +22,7 @@ function draw_sampled_Bfield(df::DataFrame)
     return fig
 end
 fig = draw_sampled_Bfield(df)
-savefig(fig, datadir("zeeman_beat", "gaussian_sampling", "Bfield_distribution.pdf"))
+savefig(fig, datadir("zeeman_beat", "gaussian_sampling1mG", "Bfield_distribution.pdf"))
 
 
 function get_avg_fit(df)
@@ -43,7 +43,7 @@ function get_avg_fit(df)
     plot!(t_out, fit_model, lab="double exponential fit", ls=:dash)
     fig_residual = plot(t_out, fit_raw.resid, lab="fit residuals")
     figtot = plot(fig, fig_residual, layout=(2, 1), size=(800, 600), suptitle="ΔτD/τD = $(round(dtauD, digits=4)), ΔτP/τP = $(round(dtauP, digits=3))", titlefontsize=8, xlab="tΓ")
-    savefig(figtot, datadir("zeeman_beat", "gaussian_sampling", "avg_fit.pdf"))
+    savefig(figtot, datadir("zeeman_beat", "gaussian_sampling1mG", "avg_fit.pdf"))
 
     return figtot
 end
